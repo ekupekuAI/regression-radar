@@ -28,6 +28,25 @@ try:
 except Exception:
     pass
 
+def load_dotenv(path=".env"):
+    """Read .env into the environment so the Hindsight URL and key are picked
+    up without having to export them in every new shell."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                v = v.strip().strip('"').strip("'")
+                if v and not os.environ.get(k.strip()):
+                    os.environ[k.strip()] = v
+    except FileNotFoundError:
+        pass
+
+
+load_dotenv()
+
 BANK_ID = "regression-radar-next-prisma"
 RAW_PATH = "raw_issues.jsonl"
 
