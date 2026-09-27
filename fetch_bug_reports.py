@@ -28,6 +28,25 @@ try:
 except Exception:
     pass
 
+def load_dotenv(path=".env"):
+    """Read .env into the environment. Without this, putting the token in .env
+    does nothing and the run crawls along at the 60 requests/hour
+    unauthenticated limit instead of 5,000."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                v = v.strip().strip('"').strip("'")
+                if v and not os.environ.get(k.strip()):
+                    os.environ[k.strip()] = v
+    except FileNotFoundError:
+        pass
+
+
+load_dotenv()
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 # FIX 3: every query carries `is:issue` so pull requests stay out of the
@@ -93,13 +112,23 @@ def clean_body(text):
 
 def main():
     if not GITHUB_TOKEN:
-        print("WARNING: no GITHUB_TOKEN set. You get 60 requests/hour and this")
-        print("         will stall. Make one at github.com/settings/tokens\n")
+        print("WARNING: no GITHUB_TOKEN found in the environment or in .env.")
+        print("         You get 60 requests/hour and this will crawl.")
+        print("         Put GITHUB_TOKEN=... in .env, then re-run.\n")
+    else:
+        print(f"Using GitHub token (length {len(GITHUB_TOKEN)}). 5,000 req/hour.\n")
 
     records, seen = [], set()
+    # Written as we go, not at the end, so an interrupted run keeps its work.
+    out = open(OUT_PATH, "w", encoding="utf-8")
 
     for repo, query, tag in SEARCHES:
-        q = urllib.parse.quote(f"repo:{repo} is:issue {query} in:title,body")
+        # created:>2024-01-01 because Next.js 14.2 shipped in April 2024. The
+        # first run pulled Prisma issues from 2021 that had nothing to do with
+        # an app-router upgrade - this cuts that noise out.
+        q = urllib.parse.quote(
+            f"repo:{repo} is:issue {query} in:title,body created:>2024-01-01"
+        )
         # No &sort= on purpose: GitHub's default is relevance ranking. Sorting
         # by "updated" surfaced whatever was touched most recently, which is why
         # the first run came back full of Next.js 15 and 16 issues instead of
@@ -140,7 +169,7 @@ def main():
             except Exception as e:
                 print(f"  ! comments for #{item['number']}: {e}")
 
-            records.append({
+            rec = {
                 "repo": repo,
                 "number": item["number"],
                 "title": item["title"],
@@ -152,12 +181,13 @@ def main():
                 "body": clean_body(item.get("body", "")),
                 "top_comments": [clean_body(c.get("body", "")) for c in comments[:3]],
                 "tag": tag,
-            })
+            }
+            records.append(rec)
+            out.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            out.flush()
             print(f"    + #{item['number']}: {item['title'][:70]}")
 
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
-        for r in records:
-            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    out.close()
 
     closed = sum(1 for r in records if r["state"] == "closed")
     print(f"\nWrote {len(records)} real issues to {OUT_PATH}")
