@@ -1,0 +1,25 @@
+# Secrets - never commit these
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# The two source documents are not ours to publish
+*.docx
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+.next/
+dist/
+.vercel/
+
+# OS
+Thumbs.db
+.DS_Store
