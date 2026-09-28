@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { Risk, RiskCard } from "./RiskCard";
 import { ShieldCheck, AlertTriangle } from "lucide-react";
 
@@ -8,19 +9,17 @@ interface RiskListProps {
   risks: Risk[];
   summaryText?: string;
   onFeedback?: (riskId: string, happened: boolean) => void;
+  sent?: Record<string, "hit" | "fine">;
+  pending?: string | null;
 }
 
-export function RiskList({
-  risks,
-  summaryText = "6 known breakages for this combination · 4 fixed · 2 still open",
-  onFeedback,
-}: RiskListProps) {
+export function RiskList({ risks, summaryText, onFeedback, sent = {}, pending = null }: RiskListProps) {
+  const reduceMotion = useReducedMotion();
   const fixedCount = risks.filter((r) => r.status === "fixed").length;
   const openCount = risks.filter((r) => r.status === "open").length;
 
   return (
     <section aria-labelledby="results-heading" className="space-y-4">
-      {/* Result summary banner */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:px-6 shadow-xs">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-800 border border-neutral-200">
@@ -39,7 +38,7 @@ export function RiskList({
               )}
             </h2>
             <p className="text-xs text-neutral-500">
-              Citations verified from historical repository snapshots
+              Fixed or open comes from GitHub itself. Issues we can&apos;t verify are left out.
             </p>
           </div>
         </div>
@@ -50,12 +49,29 @@ export function RiskList({
         </div>
       </div>
 
-      {/* Cards list */}
-      <div className="space-y-3.5">
-        {risks.map((risk) => (
-          <RiskCard key={risk.id} risk={risk} onFeedback={onFeedback} />
-        ))}
-      </div>
+      {risks.length === 0 ? (
+        <p className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600">
+          Nothing in memory matches that upgrade yet. Try “Next.js 14.1 to 14.2, app router + Prisma”.
+        </p>
+      ) : (
+        <div className="space-y-3.5">
+          {risks.map((risk) => (
+            <motion.div
+              key={risk.id}
+              layout={!reduceMotion}
+              transition={{ type: "spring", stiffness: 260, damping: 30 }}
+            >
+              <RiskCard
+                risk={risk}
+                onFeedback={onFeedback}
+                sent={sent[risk.id]}
+                pending={pending === risk.id}
+                disabled={pending !== null && pending !== risk.id}
+              />
+            </motion.div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

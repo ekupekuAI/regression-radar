@@ -1,251 +1,265 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { AlertCircle, Loader2, RotateCcw } from "lucide-react";
 import { Header } from "@/components/Header";
 import { StackForm } from "@/components/StackForm";
 import { RiskList } from "@/components/RiskList";
 import { Risk } from "@/components/RiskCard";
-import { MemoryInspector, MemoryEventItem, PlaybookData } from "@/components/MemoryInspector";
-import { BaselineComparison } from "@/components/BaselineComparison";
+import {
+  MemoryInspector,
+  MemoryEventItem,
+  MemorySample,
+  PlaybookData,
+} from "@/components/MemoryInspector";
+import { BaselineComparison, BaselineData, BriefCitations } from "@/components/BaselineComparison";
 import { LearnForm } from "@/components/LearnForm";
 
-// Realistic mock data based on the repository's real verified issue dataset
-const MOCK_RISKS: Risk[] = [
-  {
-    id: "next-64394",
-    title: "Cookie not being set after upgrade from 14.0.4 to 14.2 in App Router",
-    status: "fixed",
-    fixed_in: "14.2.3",
-    confidence: "high",
-    why: "Server Actions and Route Handlers strict cookie parsing changed in 14.2.0, causing session drops.",
-    sources: [
-      {
-        repo: "vercel/next.js",
-        number: 64394,
-        url: "https://github.com/vercel/next.js/issues/64394",
-        title: "nextjs 14.2 app-router Cookie not being set after version upgrade from v14.0.4 to 14.2",
-      },
-    ],
-    feedback: { hit: 3, fine: 0 },
-    from_feedback: true,
-  },
-  {
-    id: "next-64603",
-    title: "iOS Safari requires 2 clicks for Links to open when Prefetch is true",
-    status: "fixed",
-    fixed_in: "14.2.2",
-    confidence: "high",
-    why: "Touch event listeners interfered with viewport prefetching logic on mobile WebKit.",
-    sources: [
-      {
-        repo: "vercel/next.js",
-        number: 64603,
-        url: "https://github.com/vercel/next.js/issues/64603",
-        title: "iOS Safari requires 2 clicks for Links to open when Prefetch is true. Using Next 14.2",
-      },
-    ],
-    feedback: { hit: 2, fine: 1 },
-    from_feedback: false,
-  },
-  {
-    id: "next-64921",
-    title: "Inconsistent CSS resolution order with App Router and nested layouts",
-    status: "open",
-    fixed_in: null,
-    confidence: "medium",
-    why: "CSS module chunk injection priority fluctuates when transitioning between dynamic parallel routes.",
-    sources: [
-      {
-        repo: "vercel/next.js",
-        number: 64921,
-        url: "https://github.com/vercel/next.js/issues/64921",
-        title: "Inconsistent CSS resolution order with App Router",
-      },
-    ],
-    feedback: { hit: 1, fine: 0 },
-    from_feedback: false,
-  },
-  {
-    id: "next-64434",
-    title: "ERR_REQUIRE_ESM when bundling syntax highlighter libraries (e.g. shiki)",
-    status: "fixed",
-    fixed_in: "14.2.1",
-    confidence: "high",
-    why: "Server component externals bundle resolution treated pure ESM packages as CJS require calls.",
-    sources: [
-      {
-        repo: "vercel/next.js",
-        number: 64434,
-        url: "https://github.com/vercel/next.js/issues/64434",
-        title: "[ERR_REQUIRE_ESM]: require() of ES Module `shiki` when using `14.2.x`",
-      },
-    ],
-    feedback: { hit: 0, fine: 2 },
-    from_feedback: false,
-  },
-  {
-    id: "next-71131",
-    title: "i18n configuration causes 500 runtime crash when malformed URLs are visited",
-    status: "open",
-    fixed_in: null,
-    confidence: "medium",
-    why: "Malformed locale prefixes bypass normal 404 routing handlers in custom middleware setups.",
-    sources: [
-      {
-        repo: "vercel/next.js",
-        number: 71131,
-        url: "https://github.com/vercel/next.js/issues/71131",
-        title: "i18n configuration causes 500 error when certain malformed URLs are visited",
-      },
-    ],
-    feedback: { hit: 0, fine: 0 },
-    from_feedback: false,
-  },
-  {
-    id: "next-64609",
-    title: "Slow page transitions and infinite loading indicator during internal navigation",
-    status: "fixed",
-    fixed_in: "14.2.4",
-    confidence: "high",
-    why: "Prisma client connection pools stalled during Next.js background revalidation passes.",
-    sources: [
-      {
-        repo: "vercel/next.js",
-        number: 64609,
-        url: "https://github.com/vercel/next.js/issues/64609",
-        title: "Slow Page Transitions and Infinite Loading with Internal Navigation Using Link Component in Next.js 14.2",
-      },
-    ],
-    feedback: { hit: 1, fine: 0 },
-    from_feedback: false,
-  },
-];
-
-const MOCK_MEMORY_EVENTS: MemoryEventItem[] = [
-  {
-    type: "retain",
-    hits: 1,
-    note: "Saved outcome: user reported middleware did not break on 14.2",
-    at: "18:04:12",
-  },
-  {
-    type: "reflect",
-    hits: 6,
-    note: "Checked issue evidence: 6 citations verified against GitHub snapshot (4 fixed, 2 open)",
-    at: "18:02:45",
-  },
-  {
-    type: "recall",
-    hits: 14,
-    note: "Matched 14 bug reports on app router + cookie + Prisma 5.x",
-    at: "18:02:40",
-    query: "Next.js 14.1 to 14.2, app router + Prisma",
-  },
-  {
-    type: "recall",
-    hits: 48,
-    note: "Searched vector memory bank for Next.js 14.1 to 14.2 migration patterns",
-    at: "18:02:38",
-  },
-];
-
-const MOCK_PLAYBOOK: PlaybookData = {
-  name: "Next.js 14.2 Upgrade Playbook",
-  refreshed_at: "18:00 UTC",
-  stale: false,
-  content:
-    "When upgrading from Next.js 14.1 to 14.2 with App Router and Prisma: 1) Verify cookie handling in Server Actions and Middleware (#64394 · fixed in 14.2.3). 2) Check iOS Safari link prefetching (#64603 · fixed in 14.2.2). 3) Ensure Prisma schema generates with proper target output paths. 4) Watch for CSS resolution order changes with layout nesting (#64921 · still open).",
+type BriefResponse = {
+  query: string;
+  summary: string;
+  citations: BriefCitations;
+  corpus_size: number;
+  risks: Risk[];
+  memory_events: MemoryEventItem[];
+  playbook: PlaybookData | null;
 };
 
+const DEFAULT_STACK = "Next.js 14.1 to 14.2, app router + Prisma";
+
+// The real steps /api/brief goes through, shown in order while it works.
+const STEPS = [
+  "Searching memory of 98 bug reports",
+  "Reading what memory found",
+  "Checking every issue number against GitHub",
+];
+
+async function postJSON<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data?.error) {
+    throw new Error(data?.error || `Request failed (${res.status}). Please try again.`);
+  }
+  return data as T;
+}
+
+function clockTime(iso: string | null | undefined) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? iso
+    : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
 export default function Home() {
-  const [currentStack, setCurrentStack] = useState("Next.js 14.1 to 14.2, app router + Prisma");
-  const [risks, setRisks] = useState<Risk[]>(MOCK_RISKS);
+  const [stack, setStack] = useState(DEFAULT_STACK);
+  const [brief, setBrief] = useState<BriefResponse | null>(null);
+  const [baseline, setBaseline] = useState<BaselineData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [baselineLoading, setBaselineLoading] = useState(false);
+  const [step, setStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [baselineError, setBaselineError] = useState<string | null>(null);
+  const [laterEvents, setLaterEvents] = useState<MemoryEventItem[]>([]);
+  const [sent, setSent] = useState<Record<string, "hit" | "fine">>({});
+  const [pending, setPending] = useState<string | null>(null);
+  const [askAgain, setAskAgain] = useState(false);
 
-  const handleStackSubmit = (stack: string) => {
-    setCurrentStack(stack);
-    // Visual only for static frontend phase
+  useEffect(() => {
+    if (!loading) return;
+    setStep(0);
+    const timer = setInterval(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)), 6000);
+    return () => clearInterval(timer);
+  }, [loading]);
+
+  const runBrief = async (s: string) => {
+    setLoading(true);
+    setError(null);
+    setAskAgain(false);
+    try {
+      const data = await postJSON<BriefResponse>("/api/brief", { stack: s });
+      setBrief(data);
+      setLaterEvents([]);
+      setSent({});
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleRiskFeedback = (riskId: string, happened: boolean) => {
-    // Visual only state update for static frontend phase
-    setRisks((prev) =>
-      prev.map((r) => {
-        if (r.id === riskId) {
-          const fb = r.feedback || { hit: 0, fine: 0 };
-          return {
-            ...r,
-            feedback: {
-              hit: happened ? fb.hit + 1 : fb.hit,
-              fine: !happened ? fb.fine + 1 : fb.fine,
-            },
-          };
-        }
-        return r;
-      })
-    );
+  const runBaseline = async (s: string) => {
+    setBaselineLoading(true);
+    setBaselineError(null);
+    try {
+      setBaseline(await postJSON<BaselineData>("/api/baseline", { stack: s }));
+    } catch (e) {
+      setBaselineError(e instanceof Error ? e.message : "The comparison failed. Please try again.");
+    } finally {
+      setBaselineLoading(false);
+    }
   };
 
-  const handleSaveOutcome = (note: string) => {
-    // Visual only for static frontend phase
-    console.log("Outcome recorded:", note);
+  const handleSubmit = (s: string) => {
+    setStack(s);
+    runBrief(s);
+    runBaseline(s);
   };
+
+  const handleFeedback = async (riskId: string, happened: boolean) => {
+    const risk = brief?.risks.find((r) => r.id === riskId);
+    if (!risk || sent[riskId] || pending) return;
+    setPending(riskId);
+    setError(null);
+    try {
+      const data = await postJSON<{ memory_events: MemoryEventItem[] }>("/api/learn", {
+        stack,
+        feedback: [{ number: risk.sources[0].number, happened }],
+      });
+      setSent((prev) => ({ ...prev, [riskId]: happened ? "hit" : "fine" }));
+      setLaterEvents((prev) => [...prev, ...(data.memory_events ?? [])]);
+      setAskAgain(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't save that to memory. Please try again.");
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const handleSaveOutcome = async (note: string): Promise<boolean> => {
+    try {
+      const data = await postJSON<{ memory_events: MemoryEventItem[] }>("/api/learn", {
+        stack,
+        outcome: note,
+      });
+      setLaterEvents((prev) => [...prev, ...(data.memory_events ?? [])]);
+      setAskAgain(true);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const allEvents = [...(brief?.memory_events ?? []), ...laterEvents].map((e) => ({
+    ...e,
+    at: clockTime(e.at),
+  }));
+  const breakdown =
+    brief?.memory_events.find((e) => e.type === "recall" && e.breakdown)?.breakdown ?? {};
+  // Hindsight consolidates each developer report into a generic line like
+  // "The developer upgraded Next.js from 14.1 to 14.2...". Real, but it tells
+  // a viewer nothing, so prefer memories that actually say something.
+  const allSamples: MemorySample[] = (brief?.memory_events ?? []).flatMap((e) => e.samples ?? []);
+  const informative = allSamples.filter(
+    (s) => !/^(the )?(developer|team|user)s? (upgraded|performed|did)/i.test(s.text)
+  );
+  const samples = (informative.length > 0 ? informative : allSamples).slice(0, 5);
+  const playbook = brief?.playbook
+    ? { ...brief.playbook, refreshed_at: clockTime(brief.playbook.refreshed_at) }
+    : null;
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <Header />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
-        {/* Top Hero / Query Section */}
-        <StackForm
-          initialStack={currentStack}
-          onSubmit={handleStackSubmit}
-        />
+        <StackForm initialStack={stack} onSubmit={handleSubmit} isLoading={loading} />
 
-        {/* Two-Column Responsive Layout */}
+        {error && (
+          <div
+            role="alert"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          >
+            <span className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {error}
+            </span>
+            <button
+              type="button"
+              onClick={() => handleSubmit(stack)}
+              className="rounded-md border border-red-300 bg-white px-3 py-1 text-xs font-semibold text-red-800 hover:bg-red-100 cursor-pointer"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
-          {/* Left Main Content: Results, Comparison, Learning (68% width on desktop) */}
           <div className="space-y-8 lg:col-span-8">
-            {/* Risk Results */}
-            <RiskList
-              risks={risks}
-              summaryText="6 known breakages for this combination · 4 fixed · 2 still open"
-              onFeedback={handleRiskFeedback}
+            {loading && (
+              <div
+                role="status"
+                aria-live="polite"
+                className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-700 shadow-xs"
+              >
+                <Loader2 className="h-4 w-4 animate-spin text-neutral-500" aria-hidden="true" />
+                <span>
+                  {STEPS[step]}… <span className="text-neutral-400">({step + 1}/{STEPS.length})</span>
+                </span>
+              </div>
+            )}
+
+            {askAgain && !loading && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-900">
+                <span>Saved to memory. Ask again to see the answer change.</span>
+                <button
+                  type="button"
+                  onClick={() => runBrief(stack)}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-purple-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-purple-800 cursor-pointer"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                  Ask again
+                </button>
+              </div>
+            )}
+
+            {brief ? (
+              <div className={loading ? "opacity-50 transition-opacity" : "transition-opacity"}>
+                <RiskList
+                  risks={brief.risks}
+                  summaryText={brief.summary}
+                  onFeedback={handleFeedback}
+                  sent={sent}
+                  pending={pending}
+                />
+              </div>
+            ) : loading ? (
+              <div className="space-y-3.5" aria-hidden="true">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="h-36 animate-pulse rounded-xl border border-neutral-200 bg-white" />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-neutral-300 bg-white p-8 text-center text-sm text-neutral-600">
+                <p className="font-medium text-neutral-900">Press “Check this upgrade” to see what broke for other developers.</p>
+                <p className="mt-1 text-xs text-neutral-500">
+                  The first answer takes a little while: memory is searched, then every issue is checked against GitHub.
+                </p>
+              </div>
+            )}
+
+            <BaselineComparison
+              memoryOn={brief?.citations ?? null}
+              memoryOff={baseline}
+              loadingOn={loading}
+              loadingOff={baselineLoading}
+              errorOff={baselineError}
             />
 
-            {/* Baseline Memory On/Off Comparison */}
-            <BaselineComparison />
-
-            {/* Learning Feedback Form */}
-            <LearnForm
-              stack={currentStack}
-              onSave={handleSaveOutcome}
-            />
+            {brief && <LearnForm stack={stack} onSave={handleSaveOutcome} />}
           </div>
 
-          {/* Right Column: Sticky Memory Inspector (32% width on desktop) */}
           <div className="lg:col-span-4 lg:sticky lg:top-20">
             <MemoryInspector
-              events={MOCK_MEMORY_EVENTS}
-              breakdown={{
-                WORLD: 48,
-                OBSERVATION: 32,
-                MENTAL_MODEL: 1,
-              }}
-              samples={[
-                {
-                  type: "world",
-                  text: "Next.js 14.2.0 introduced strict cookie parsing in Server Actions (#64394).",
-                },
-                {
-                  type: "observation",
-                  text: "Prisma client generate in Docker requires explicit binaryTargets on Alpine with 14.2.",
-                },
-                {
-                  type: "world",
-                  text: "Link prefetch true on iOS Safari causes double-tap delay in 14.2 (#64603).",
-                },
-              ]}
-              playbook={MOCK_PLAYBOOK}
+              events={allEvents}
+              breakdown={breakdown}
+              samples={samples}
+              playbook={playbook}
+              loading={loading}
             />
           </div>
         </div>

@@ -1,7 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import { CheckCircle2, AlertCircle, ExternalLink, ThumbsDown, ThumbsUp, ShieldCheck } from "lucide-react";
+import React from "react";
+import {
+  CheckCircle2,
+  AlertCircle,
+  ExternalLink,
+  ThumbsDown,
+  ThumbsUp,
+  ShieldCheck,
+  Loader2,
+  Users,
+} from "lucide-react";
 
 export interface Source {
   repo: string;
@@ -28,21 +37,29 @@ export interface Risk {
 interface RiskCardProps {
   risk: Risk;
   onFeedback?: (riskId: string, happened: boolean) => void;
+  /** What this viewer already reported for this warning, so it can't be sent twice. */
+  sent?: "hit" | "fine";
+  pending?: boolean;
+  disabled?: boolean;
 }
 
-export function RiskCard({ risk, onFeedback }: RiskCardProps) {
-  const [selectedFeedback, setSelectedFeedback] = useState<"hit" | "fine" | null>(null);
+function developers(n: number) {
+  return `${n} developer${n === 1 ? "" : "s"}`;
+}
 
+export function RiskCard({ risk, onFeedback, sent, pending = false, disabled = false }: RiskCardProps) {
   const handleFeedback = (happened: boolean) => {
-    const type = happened ? "hit" : "fine";
-    setSelectedFeedback((prev) => (prev === type ? null : type));
-    if (onFeedback) {
-      onFeedback(risk.id, happened);
-    }
+    if (sent || pending || disabled) return;
+    onFeedback?.(risk.id, happened);
   };
 
   const isFixed = risk.status === "fixed";
   const primarySource = risk.sources[0];
+  const hit = risk.feedback?.hit ?? 0;
+  const fine = risk.feedback?.fine ?? 0;
+  const confirmed = hit > fine;
+  const cleared = fine > hit;
+  const locked = Boolean(sent) || pending || disabled;
 
   const confidenceBadge = {
     high: "border-neutral-200 bg-neutral-100 text-neutral-800",
@@ -53,7 +70,9 @@ export function RiskCard({ risk, onFeedback }: RiskCardProps) {
   return (
     <article
       aria-labelledby={`risk-title-${risk.id}`}
-      className="group relative rounded-xl border border-neutral-200 bg-white p-5 shadow-xs transition-all hover:border-neutral-300"
+      className={`group relative rounded-xl border bg-white p-5 shadow-xs transition-all hover:border-neutral-300 ${
+        confirmed ? "border-blue-300 ring-1 ring-blue-100" : "border-neutral-200"
+      } ${cleared ? "opacity-60" : ""}`}
     >
       <div className="flex flex-col gap-3">
         {/* Header row: Badges and Issue ID */}
@@ -80,9 +99,16 @@ export function RiskCard({ risk, onFeedback }: RiskCardProps) {
               <span className="capitalize">{risk.confidence} confidence</span>
             </span>
 
-            {risk.from_feedback && (
-              <span className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
-                Developer confirmed
+            {confirmed && (
+              <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                <Users className="h-3 w-3" aria-hidden="true" />
+                Confirmed by {developers(hit)}
+              </span>
+            )}
+            {cleared && (
+              <span className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-xs font-medium text-neutral-600">
+                <Users className="h-3 w-3" aria-hidden="true" />
+                Didn&apos;t affect {developers(fine)}
               </span>
             )}
           </div>
@@ -120,19 +146,29 @@ export function RiskCard({ risk, onFeedback }: RiskCardProps) {
 
         {/* Feedback Section */}
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 pt-3 text-xs text-neutral-500">
-          <div className="flex items-center gap-2">
-            <span>Did you test this upgrade?</span>
+          <div className="flex items-center gap-2" aria-live="polite">
+            {pending ? (
+              <span className="inline-flex items-center gap-1.5 text-neutral-700">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Saving to memory…
+              </span>
+            ) : sent ? (
+              <span className="font-medium text-purple-800">Saved to memory. Ask again to see the change.</span>
+            ) : (
+              <span>Did you do this upgrade?</span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => handleFeedback(true)}
-              aria-pressed={selectedFeedback === "hit"}
-              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
-                selectedFeedback === "hit"
+              aria-pressed={sent === "hit"}
+              disabled={locked}
+              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer disabled:cursor-default focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
+                sent === "hit"
                   ? "border-neutral-900 bg-neutral-900 text-white"
-                  : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
+                  : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:hover:bg-white"
               }`}
             >
               <ThumbsDown className="h-3.5 w-3.5" aria-hidden="true" />
@@ -147,11 +183,12 @@ export function RiskCard({ risk, onFeedback }: RiskCardProps) {
             <button
               type="button"
               onClick={() => handleFeedback(false)}
-              aria-pressed={selectedFeedback === "fine"}
-              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
-                selectedFeedback === "fine"
+              aria-pressed={sent === "fine"}
+              disabled={locked}
+              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer disabled:cursor-default focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
+                sent === "fine"
                   ? "border-neutral-900 bg-neutral-900 text-white"
-                  : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
+                  : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:hover:bg-white"
               }`}
             >
               <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />

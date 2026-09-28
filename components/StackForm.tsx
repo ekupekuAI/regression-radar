@@ -66,7 +66,7 @@ export function StackForm({
               disabled={isLoading}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 px-5 py-3 text-sm font-medium text-white shadow-xs hover:bg-neutral-800 focus:outline-hidden focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 disabled:opacity-50 transition-colors cursor-pointer"
             >
-              <span>Check this upgrade</span>
+              <span>{isLoading ? "Checking…" : "Check this upgrade"}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
