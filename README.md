@@ -119,7 +119,7 @@ Now each verdict is its own memory with structured tags. On recall, it is counte
 
 ### 3. The before/after is a number, not an adjective
 
-`/api/baseline` sends the same question to the same class of model with no memory and runs the same verification.
+`/api/baseline` sends the same question, with no memory, to a capable general model (`openai/gpt-oss-120b` on Groq) and runs the same verification on its answer.
 
 | | Issue numbers cited | Verifiable against the snapshot |
 |---|---|---|
