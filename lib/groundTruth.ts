@@ -27,6 +27,48 @@ export function lookup(number: number): Issue | undefined {
 }
 
 /**
+ * The playbook (Hindsight's mental model) is prose the model writes, so it
+ * gets the same treatment as every other answer. Its first draft labelled
+ * three closed issues OPEN and cited "#84901675" for a problem whose real
+ * issue is #66248. So: any fixed/open label it wrote is removed, every issue
+ * number is checked against the snapshot and stamped with its real status,
+ * and numbers that cannot be verified are taken out of the text.
+ */
+export function verifyPlaybookText(text: string): {
+  text: string;
+  verified: number[];
+  removed: number[];
+} {
+  const verified = new Set<number>();
+  const removed = new Set<number>();
+  const GONE = "\u0000";
+
+  let t = text.replace(/\s*\((?:OPEN|FIXED|CLOSED|STILL OPEN|RESOLVED)\)/gi, "");
+
+  t = t.replace(/#(\d{3,9})\b/g, (_m, num: string) => {
+    const n = Number(num);
+    const hit = lookup(n);
+    if (!hit) {
+      removed.add(n);
+      return GONE;
+    }
+    verified.add(n);
+    return `#${n} · ${hit.state === "open" ? "still open" : "fixed"}`;
+  });
+
+  // "(GitHub issue #84901675)" with nothing verifiable left in it goes entirely.
+  t = t.replace(/\s*\(\s*(?:GitHub\s+)?(?:issues?\s*)?\u0000(?:\s*(?:,|and)\s*\u0000)*\s*\)/gi, "");
+  // Any other unverifiable number goes, along with the comma or "and" that
+  // joined it to the next number ("#999999 and #64609") or the previous one.
+  t = t.replace(/\u0000\s*(?:,|\band\b)\s*/g, "");
+  t = t.replace(/\s*(?:,|\band\b)?\s*\u0000/g, "");
+  // Tidy spacing inside lines without touching the markdown line breaks.
+  t = t.replace(/[ \t]{2,}/g, " ").replace(/ +([.,;:)])/g, "$1");
+
+  return { text: t.trim(), verified: Array.from(verified), removed: Array.from(removed) };
+}
+
+/**
  * The model is good at spotting which bug reports are relevant to an upgrade.
  * It is measurably bad at saying whether one is still open: it reads a user
  * writing "this is still broken" in a 2024 comment and reports OPEN even when

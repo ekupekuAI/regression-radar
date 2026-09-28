@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { reflectRisks, type MemoryEvent } from "@/lib/hindsight";
-import { verifyCitations, lookup, TOTAL_ISSUES } from "@/lib/groundTruth";
+import { reflectRisks, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
+import { verifyCitations, verifyPlaybookText, lookup, TOTAL_ISSUES } from "@/lib/groundTruth";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -44,8 +44,39 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { summary, risks, events, tally } = await reflectRisks(stack);
+    const [{ summary, risks, events, tally }, rawPlaybook] = await Promise.all([
+      reflectRisks(stack),
+      getPlaybook(),
+    ]);
     const memory_events: MemoryEvent[] = [...events];
+
+    let playbook = null;
+    if (rawPlaybook) {
+      const checked = verifyPlaybookText(rawPlaybook.content);
+      playbook = {
+        name: rawPlaybook.name,
+        refreshed_at: rawPlaybook.refreshed_at,
+        stale: rawPlaybook.stale,
+        content: checked.text,
+        verified_issues: checked.verified,
+        removed_citations: checked.removed,
+      };
+      const firstLine =
+        checked.text
+          .split("\n")
+          .map((l) => l.replace(/^[#>*\-\d.\s]+/, "").trim())
+          .find((l) => l.length > 40) ?? "";
+      memory_events.push({
+        type: "recall",
+        hits: checked.verified.length,
+        samples: firstLine ? [{ type: "mental_model", text: firstLine.slice(0, 180) }] : [],
+        note:
+          `loaded the mental model "${rawPlaybook.name}"` +
+          (rawPlaybook.refreshed_at ? `, rewritten by Hindsight at ${rawPlaybook.refreshed_at.slice(11, 16)} UTC` : "") +
+          (rawPlaybook.stale ? " (refresh pending)" : ""),
+        at: new Date().toISOString(),
+      });
+    }
 
     const out: Risk[] = [];
     const shown = new Set<number>();
@@ -164,6 +195,7 @@ export async function POST(req: Request) {
       model_summary: summary,
       corpus_size: TOTAL_ISSUES,
       risks: out,
+      playbook,
       memory_events,
     });
   } catch (err) {
