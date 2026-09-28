@@ -15,6 +15,7 @@ Run:
     python load_to_hindsight.py load                  push raw_issues.jsonl
     python load_to_hindsight.py brief "Next.js 14.1 -> 14.2, app router + Prisma"
     python load_to_hindsight.py learn "middleware did not break, hydration did"
+    python load_to_hindsight.py mental-model          create/read the standing upgrade playbook
     python load_to_hindsight.py reset-feedback        dry run: list recorded outcomes
     python load_to_hindsight.py reset-feedback --yes  delete them - run before recording the demo
 """
@@ -151,6 +152,54 @@ def brief(stack):
     print(getattr(answer, "text", answer))
 
 
+MENTAL_MODEL_ID = "upgrade-playbook"
+
+
+def mental_model():
+    """The fourth memory type: a curated, standing summary of what usually
+    breaks in this upgrade. Hindsight writes it by running the source query
+    over everything in the bank, and rewrites it on its own after each round
+    of consolidation - so when developers report outcomes, the playbook
+    updates without anyone touching it. reflect() consults it by default.
+    """
+    import time
+
+    try:
+        client.create_mental_model(
+            bank_id=BANK_ID,
+            id=MENTAL_MODEL_ID,
+            name="What breaks upgrading Next.js 14.1 to 14.2 with the App Router and Prisma",
+            source_query=(
+                "Summarise what most commonly breaks when upgrading Next.js from "
+                "14.1 to 14.2 in projects that use the App Router and Prisma. Group "
+                "the problems by area: routing and navigation, rendering and CSS, "
+                "build and tooling, and Prisma and runtime. For each problem give "
+                "the GitHub issue numbers it comes from. If developers who did the "
+                "upgrade reported that a problem did or did not happen to them, "
+                "say so. Only use real bug reports and developer reports from "
+                "memory. Never invent an issue number."
+            ),
+            max_tokens=1500,
+            trigger={"refresh_after_consolidation": True, "min_refresh_interval_seconds": 60},
+        )
+        print(f"Created mental model '{MENTAL_MODEL_ID}'. Hindsight is writing it now...")
+    except Exception as e:
+        print(f"create_mental_model said: {str(e)[:200]}")
+        print("If it already exists, that is fine - reading it back.")
+
+    for attempt in range(12):
+        m = client.get_mental_model(bank_id=BANK_ID, mental_model_id=MENTAL_MODEL_ID, detail="full")
+        d = m.to_dict() if hasattr(m, "to_dict") else dict(m)
+        content = d.get("content") or ""
+        if content.strip():
+            print(f"\n--- {d.get('name')} ---")
+            print(f"(last refreshed: {d.get('last_refreshed_at') or d.get('updated_at') or '?'})\n")
+            print(content)
+            return
+        time.sleep(10)
+    print("Still generating - run this command again in a minute to read it.")
+
+
 def reset_feedback(confirm):
     """Remove every document that is not part of the committed snapshot - all
     recorded upgrade outcomes and any test data - leaving the 98 real issues.
@@ -193,6 +242,15 @@ def reset_feedback(confirm):
             await client.documents.delete_document(bank_id=BANK_ID, document_id=i)
             print("deleted", i)
 
+        # The playbook may still describe the reports just deleted, so ask
+        # Hindsight to rewrite it from what is left. Done inside this event
+        # loop: the sync wrapper fails once asyncio.run() has closed it.
+        try:
+            await client.arefresh_mental_model(bank_id=BANK_ID, mental_model_id=MENTAL_MODEL_ID)
+            print("Asked Hindsight to rewrite the playbook without them.")
+        except Exception as e:
+            print(f"Playbook refresh skipped: {str(e)[:120]}")
+
     asyncio.run(run())
 
 
@@ -223,5 +281,7 @@ if __name__ == "__main__":
         learn(rest)
     elif cmd == "reset-feedback":
         reset_feedback("--yes" in sys.argv[2:])
+    elif cmd == "mental-model":
+        mental_model()
     else:
         print(f"Unknown command: {cmd}")

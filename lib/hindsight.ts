@@ -14,6 +14,43 @@ export type MemoryEvent = {
   breakdown?: Record<string, number>;
 };
 
+export const PLAYBOOK_ID = process.env.HINDSIGHT_PLAYBOOK_ID ?? "upgrade-playbook";
+
+export type Playbook = {
+  name: string;
+  refreshed_at: string | null;
+  stale: boolean;
+  content: string;
+};
+
+/**
+ * The fourth memory type. Hindsight writes this mental model by running a
+ * standing question over the whole bank, and rewrites it after each round of
+ * consolidation, so developer reports change it without anyone editing it.
+ * reflect() consults it by default; we also fetch it so the inspector can
+ * show what the standing summary currently says.
+ */
+export async function getPlaybook(): Promise<Playbook | null> {
+  try {
+    const res = await fetch(
+      `${BASE}/v1/default/banks/${BANK_ID}/mental-models/${PLAYBOOK_ID}?detail=full`,
+      { headers: headers(), cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const d = await res.json();
+    const content = typeof d.content === "string" ? d.content.trim() : "";
+    if (!content || /^generating/i.test(content)) return null;
+    return {
+      name: d.name ?? "Upgrade playbook",
+      refreshed_at: d.last_refreshed_at ?? null,
+      stale: Boolean(d.is_stale),
+      content,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** One developer's verdict on one warning: did it actually happen to them? */
 export type Feedback = { number: number; happened: boolean };
 
@@ -101,13 +138,16 @@ async function recallOutcomes(stack: string): Promise<{
   tally: Tally;
   reports: number;
   observations: string[];
-  statements: string[];
+  statements: { type: string; text: string }[];
 }> {
   const tally: Tally = {};
   const counted = new Set<string>();
   const docs = new Set<string>();
   const observations: string[] = [];
-  const statements: string[] = [];
+  // Kept with Hindsight's own classification. It files a developer's report
+  // as a world fact, not an experience - experience is the bank's own actions
+  // - and the inspector should show what Hindsight actually did.
+  const statements: { type: string; text: string }[] = [];
 
   try {
     const rec = await call("/memories/recall", {
@@ -127,7 +167,7 @@ async function recallOutcomes(stack: string): Promise<{
         continue;
       }
       docs.add(doc);
-      if (text) statements.push(text);
+      if (text) statements.push({ type: r.type ?? "world", text });
 
       const tags = r.tags ?? [];
       const issueTag = tags.find((t) => t.startsWith("issue:"));
@@ -152,7 +192,7 @@ async function recallOutcomes(stack: string): Promise<{
     tally,
     reports: docs.size,
     observations: Array.from(new Set(observations)).slice(0, 4),
-    statements: Array.from(new Set(statements)).slice(0, 8),
+    statements: Array.from(new Map(statements.map((s) => [s.text, s])).values()).slice(0, 8),
   };
 }
 
@@ -212,7 +252,7 @@ export async function reflectRisks(stack: string): Promise<{
   if (reports > 0) {
     const samples = [
       ...observations.slice(0, 1).map((text) => ({ type: "observation", text })),
-      ...statements.slice(0, 2).map((text) => ({ type: "experience", text })),
+      ...statements.slice(0, 2),
     ];
     events.push({
       type: "recall",
@@ -227,7 +267,7 @@ export async function reflectRisks(stack: string): Promise<{
     statements.length === 0
       ? undefined
       : "Developers who already did a similar upgrade reported:\n" +
-        statements.map((s, i) => `${i + 1}. ${s}`).join("\n") +
+        statements.map((s, i) => `${i + 1}. ${s.text}`).join("\n") +
         "\nTake these into account when judging what is likely to break.";
 
   const data = await call("/reflect", {
