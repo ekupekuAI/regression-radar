@@ -1,0 +1,1322 @@
+[
+{
+"repo": "vercel/next.js",
+"number": 64921,
+"title": "Inconsistent CSS resolution order with App Router",
+"state": "open",
+"url": "https://github.com/vercel/next.js/issues/64921",
+"closed_at": null,
+"tag": "next-14.1-to-14.2",
+"labels": [
+"linear: next",
+"CSS"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 71131,
+"title": "i18n configuration causes 500 error when certain malformed URLs are visited",
+"state": "open",
+"url": "https://github.com/vercel/next.js/issues/71131",
+"closed_at": null,
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Internationalization (i18n)",
+"Runtime"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 92839,
+"title": "useContext is null during SSG prerender in pnpm workspace (App Router, Next 14.2.x & 16 canary)",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/92839",
+"closed_at": "2026-04-15T16:51:35Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"invalid link"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 93862,
+"title": "Bug: Runtime 500 - clientReferenceManifest undefined for server-only pages in Next.js 15.5.18",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/93862",
+"closed_at": "2026-05-14T22:03:10Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"Runtime",
+"invalid link"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 80339,
+"title": "stylesheet could not be loaded - page.css error",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/80339",
+"closed_at": "2025-06-10T22:13:12Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"Output",
+"Runtime",
+"locked",
+"CSS"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64434,
+"title": "[ERR_REQUIRE_ESM]: require() of ES Module `shiki` when using `14.2.x`",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64434",
+"closed_at": "2024-09-05T12:32:03Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"locked",
+"Module Resolution"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64394,
+"title": "nextjs 14.2 app-router Cookie not being set after version upgrade from v14.0.4 to 14.2",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64394",
+"closed_at": "2024-05-13T23:41:37Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"please add a complete reproduction",
+"bug",
+"locked",
+"stale"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64609,
+"title": "Slow Page Transitions and Infinite Loading with Internal Navigation Using Link Component in Next.js 14.2",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64609",
+"closed_at": "2024-06-08T23:41:43Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"please add a complete reproduction",
+"bug",
+"Linking and Navigating",
+"locked",
+"stale"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64465,
+"title": "rt.toLowerCase is not a function on fresh next js init",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64465",
+"closed_at": "2024-04-16T10:55:07Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64433,
+"title": "server action redirect() with parallel/intercepting routes not work",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64433",
+"closed_at": "2024-04-13T14:10:25Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Linking and Navigating",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64603,
+"title": "iOS Safari requires 2 clicks for Links to open when Prefetch is true. Using Next 14.2",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64603",
+"closed_at": "2024-04-17T09:50:52Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Linking and Navigating",
+"invalid link"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 65630,
+"title": "optimizePackageImports' caches index.ts files (dev and build) when they resolve to source files outside node_modules.",
+"state": "open",
+"url": "https://github.com/vercel/next.js/issues/65630",
+"closed_at": null,
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"SWC"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 92301,
+"title": "`next build --webpack` (v16): `/_not-found` executed at build time + Google Font `Retrying 1/3...` visible — both absent in `next build` (Turbopack) — not seen in v14.2 webpack",
+"state": "open",
+"url": "https://github.com/vercel/next.js/issues/92301",
+"closed_at": null,
+"tag": "next-14.1-to-14.2",
+"labels": [
+"Webpack",
+"Font (next/font)",
+"Turbopack"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 66934,
+"title": "Cookies, logout/auth issue after 14.2",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/66934",
+"closed_at": "2024-06-16T16:35:03Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"invalid link"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 65454,
+"title": "Multiple loading.tsx files causes extra transition when revalidating with server actions on 14.2.x+",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/65454",
+"closed_at": "2025-11-12T23:43:00Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Linking and Navigating",
+"locked",
+"stale"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 65052,
+"title": "v14.2.x gives warning for `Invalid page configuration` for `middleware.ts`",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/65052",
+"closed_at": "2024-04-26T19:03:31Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Middleware",
+"Turbopack",
+"linear: turbopack",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 67057,
+"title": "Build fails when object keys contain Japanese middle dots(・) in v14.2",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/67057",
+"closed_at": "2025-12-29T23:43:33Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"locked",
+"stale"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 65324,
+"title": "Cannot compile /instrumentation whilst using babel since 14.2",
+"state": "open",
+"url": "https://github.com/vercel/next.js/issues/65324",
+"closed_at": null,
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Webpack",
+"Runtime",
+"Module Resolution",
+"Instrumentation"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 65447,
+"title": "Error occurred prerendering page \"/_not-found\" with pageExtensions option",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/65447",
+"closed_at": "2026-09-01T23:08:55Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 75179,
+"title": "Turbopack fails to load valid .mjs module with UTF-8 error",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/75179",
+"closed_at": "2025-02-01T23:42:05Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"please add a complete reproduction",
+"Turbopack",
+"locked",
+"stale"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 66248,
+"title": "Incorrect XML Namespace in sitemap.ts for Next.js 14.2",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/66248",
+"closed_at": "2024-05-29T20:19:35Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Metadata",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 68205,
+"title": "--turbo has trouble detecting client boundaries with headless ui",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/68205",
+"closed_at": "2024-08-21T20:12:51Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"Turbopack",
+"linear: turbopack",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64397,
+"title": "Regression in 14.2 stable",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64397",
+"closed_at": "2024-04-12T12:25:40Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"invalid link"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 65140,
+"title": "LangChain not compatible with Next.js 14.2.x and causing error in server component rendering.",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/65140",
+"closed_at": "2024-04-29T06:59:57Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"locked"
+]
+},
+{
+"repo": "vercel/next.js",
+"number": 64419,
+"title": "Upgrading Next 14.2 broke how dd-trace is compiled and tries to bring in a devDependency of dd-trace",
+"state": "closed",
+"url": "https://github.com/vercel/next.js/issues/64419",
+"closed_at": "2024-04-12T21:15:15Z",
+"tag": "next-14.1-to-14.2",
+"labels": [
+"bug",
+"locked"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29642,
+"title": "PANIC: called `Option::unwrap()` on a `None` value at query-compiler/core/src/query_document/selection.rs:218 (batched concurrent findUnique, client engine 7.8.0)",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29642",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 27638,
+"title": "D1 Guide seems out of date, crashing in prod",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/27638",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: Cloudflare Workers",
+"topic: driverAdapters"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29590,
+"title": "PrismaClientConstructorValidationError / .prisma/client/default error when Prisma is imported via Better Auth CLI in Next.js",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29590",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26842,
+"title": "Prisma 6.6.0 with Vercel/Neon/React Router throwing a dependency error",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/26842",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28118,
+"title": "Solution for the compatibility issue in the modules query_engine_bg.js and query_engine_bg.wasm when generating with @prisma/client: Failed to load module",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/28118",
+"closed_at": "2026-07-17T06:07:04Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28949,
+"title": "create app with prisma and biome doesn't work",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/28949",
+"closed_at": "2026-07-21T17:27:36Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27867,
+"title": "Prisma + Next.js (App Router) on Vercel with Prisma Postgres: \"Environment variable not found: DATABASE_URL\" despite env set",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/27867",
+"closed_at": "2025-08-29T07:21:38Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: generator",
+"topic: Next.js",
+"topic: deployment/vercel",
+"topic: optimize"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27177,
+"title": "PrismaClient is not configured to run in Edge Runtime",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/27177",
+"closed_at": "2025-08-29T10:46:15Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug",
+"topic: generator",
+"topic: generator-ts"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26831,
+"title": "Bug: Prisma Query Engine not bundled in Vercel Serverless (Expo Router, non-Next.js)",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/26831",
+"closed_at": "2025-04-15T07:07:41Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25472,
+"title": "Error: PrismaClient is not configured to run in Edge Runtime (...)",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/25472",
+"closed_at": "2024-12-23T20:57:43Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/feature",
+"topic: mongodb",
+"topic: driverAdapters"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26855,
+"title": "Undefined properties using PostgreSQL adapter",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/26855",
+"closed_at": "2025-04-10T05:52:15Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25930,
+"title": "Please Prisma ",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/25930",
+"closed_at": "2025-01-03T15:07:32Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25234,
+"title": "SessionTokenError & PrismaClient is not configured to run in Vercel Edge Functions or Edge Middleware",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/25234",
+"closed_at": "2024-12-30T15:36:41Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug",
+"topic: next-auth / Auth.js",
+"topic: driverAdapters",
+"topic: @prisma/adapter-neon"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25425,
+"title": "PrismaClient is not configured",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/25425",
+"closed_at": "2024-10-14T08:01:34Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23793,
+"title": "\"PrismaClient is not configured to run in Vercel Edge Functions or Edge Middleware.\" with extension in Next.js application",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/23793",
+"closed_at": "2024-04-09T22:07:57Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25158,
+"title": "Transaction API error: Transaction with { txnNumber: 2 } has been aborted.",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/25158",
+"closed_at": "2024-09-04T07:58:06Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 22943,
+"title": "PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `unknown`)",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/22943",
+"closed_at": "2024-02-03T20:33:44Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 22659,
+"title": "Accelerate cached structure stale after new db pushed (schema mismatch)",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/22659",
+"closed_at": "2024-01-16T14:02:31Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug",
+"topic: pdp/accelerate"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 22591,
+"title": "`upsert()` evaluates `create` object when updating",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/22591",
+"closed_at": "2024-02-19T11:34:17Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug",
+"tech/engines",
+"tech/engines/query engine",
+"topic: create",
+"topic: upsert()"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 30416,
+"title": "Document Prisma Postgres edge runtime support in the Prisma 8 skill",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30416",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 30252,
+"title": "`contract infer` emits `Timestamptz`, which fails at runtime on Node 24 with `RUNTIME.TEMPORAL_UNAVAILABLE`",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30252",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug",
+"topic: cli"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 24516,
+"title": "Edge runtime incompatibility error on `$on` or `$use` usage attempt",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/24516",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: Next.js",
+"topic: edge runtime"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28657,
+"title": "Prisma 7 client fails on Cloudflare Workers: “Wasm code generation disallowed by embedder”",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28657",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28986,
+"title": "Cloudflare Workers: @prisma/adapter-mariadb not supported — need mysql2/edge adapter",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28986",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/feature"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23913,
+"title": "Prisma 5.12 client for edge runtime disabled the [Prisma.dmmf] property for wasm client",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23913",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"topic: dmmf",
+"topic: wasm",
+"topic: driverAdapters"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23263,
+"title": "Prisma Client Accelerate in Edge - Need additional plugin to handle \"node:\" URIs.",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23263",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: pdp/accelerate",
+"topic: @prisma/extension-accelerate"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28105,
+"title": "WASM loading incompatibility with Vite",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28105",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug",
+"topic: generator-ts"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28338,
+"title": "Broken `authjs-nextjs` guide in docs: datasource URL is not loaded",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28338",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29394,
+"title": "RFC: Minimal migration-only binary for Docker/compiled-binary deployments",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29394",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/feature"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25122,
+"title": "Query Fails with Invalid API Key Error Despite Correct .env Setup",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/25122",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26093,
+"title": "TypedSQL Support for Microsoft SQL Server",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/26093",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/feature"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29296,
+"title": "Prisma 7 — 3‑Month Roadmap: March, April, May 2026",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29296",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 23320,
+"title": "Error when running in docker container ",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23320",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: wasm",
+"topic: prisma db pull",
+"topic: docker"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27013,
+"title": "[6.7.0] Problems with \"prisma-client\" generator",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/27013",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28732,
+"title": "[Cloudflare Workers] Promise resolved/rejected from different request context in dispatchBatches()",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28732",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26928,
+"title": "Prisma Types Errors - Declaration emit for this file requires using private name 'RequestError' from module. An explicit type annotation may unblock declaration emit.",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/26928",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25843,
+"title": "Priorities & Operating Contexts",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/25843",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"psa"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25210,
+"title": "SQLite query times out after time N/A",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/25210",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: sqlite"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25521,
+"title": "Cannot find libssl error when querying database locally",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/25521",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: engine"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27909,
+"title": "Prisma Client import fails when JSON module is imported in same project",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/27909",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: prisma-client"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28281,
+"title": "error message/format with the new rust-free prisma query engine",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28281",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 22574,
+"title": "`node_modules` are 2 times bigger than expected when installing Prisma Client and Prisma CLI on Windows",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/22574",
+"closed_at": "2026-07-20T15:02:20Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug",
+"topic: windows",
+"tech/typescript",
+"topic: engine download",
+"topic: performance/size"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29403,
+"title": "Generating Prisma 7 client/models when using runtime-cloudflare strips .ts extension from imports/exports on Deno",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/29403",
+"closed_at": "2026-03-30T17:57:18Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29739,
+"title": "`@prisma/cli app deploy` fails in packaging step — ENOENT on `@prisma/adapter-pg` dangling symlink (pnpm monorepo + Next.js)",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29739",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 30275,
+"title": "Prisma Postgres pooler stalls a new client’s first query after ~15 minutes idle",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30275",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 28210,
+"title": "Bug Report: Prisma Query Engine Crash in Next.js 15 Dev Mode",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28210",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: Next.js"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23778,
+"title": "Error - \"PrismaClient  is unable to be run in the browser\" with extension in next.js application",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23778",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"tech/typescript",
+"topic: Next.js",
+"topic: browser"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23153,
+"title": "Next.js: using `Prisma.sql` errors after upgrading to 5.9.1 (from 5.8.1)",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23153",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"topic: prisma-client",
+"topic: Next.js",
+"topic: browser",
+"5.9.0"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 24430,
+"title": "Can't use Prisma Client in Next.js middleware with `@prisma/adapter-pg` and `pg`, even locally",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/24430",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug",
+"topic: Next.js",
+"topic: Next.js middleware",
+"topic: edge runtime",
+"topic: driverAdapters"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26226,
+"title": "Unused enum are undefined in browser, but defined in node.js",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/26226",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug",
+"topic: enum",
+"topic: browser"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27304,
+"title": "`pnpm prisma init` fails with \"Cannot find module '@prisma/cli-init'\" in Prisma 6.8.2",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/27304",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27153,
+"title": "Environment variable resolution issue: env(\"DATABASE_URL\") fails while custom-named variables and hardcoded URLs work correctly",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/27153",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: generator",
+"topic: env"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 26946,
+"title": "Type error in Next.js 15.2.x - 15.3.x: Prisma generated file missing type properties (TransactionIsolationLevel, PostScalarFieldEnum, etc.)",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/26946",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29019,
+"title": "PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in ``).",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29019",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 30242,
+"title": "Prisma 8 CLI deps cause ~11s first userEvent.click on Base UI Select in Jest/jsdom",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30242",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 29838,
+"title": "Prisma 7.9.1 migrate deploy fails on MariaDB with empty Schema engine error",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29838",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 23124,
+"title": "Extension's `$connect` method is not used by Prisma query methods unless it's invoked explicitly",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23124",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"topic: connect",
+"topic: clientExtensions"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23666,
+"title": "Update relation only if exists",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/23666",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/feature",
+"topic: update"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28121,
+"title": "v6.16.1 completely breaks connection pooling",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/28121",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"tracked"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 30358,
+"title": "`prisma orm init` silently rewrites an existing tsconfig.json (`nodenext` → `preserve`/`bundler`); generated `db.ts` imports `./contract.d`, which does not resolve under `nodenext`",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30358",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 30276,
+"title": "prisma.$transaction() leaks native (non-heap) RSS memory per call — reproduces on 7.9.1 and 7.10.0 with the libSQL adapter",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30276",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 29786,
+"title": "Pool health checks (test_on_check_out) exist in quaint but cannot be enabled from a connection string — leaving long-running deployments exposed to intermittent P1001",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29786",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": []
+},
+{
+"repo": "prisma/orm",
+"number": 25812,
+"title": "npx prisma migrate dev fails with \"failed to apply cleanly to the shadow database\" and \"cannot drop type [enum] because other objects depend on it\"",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/25812",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 22779,
+"title": "Migrations with Supabase Supavisor in transaction mode don't work",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/22779",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"topic: migrate",
+"topic: transaction",
+"topic: shadow database",
+"topic: database-provider/supabase"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 29145,
+"title": "Prisma v7.0.0 + @prisma/adapter-neon: Connection string not parsed in GitHub Codespaces",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/29145",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 30255,
+"title": "Module-level Prisma 8 client hangs on the second request in Cloudflare Workers",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/30255",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug",
+"topic: Cloudflare Workers"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 27091,
+"title": "`prisma-client-js` requests to open cloudflare workers",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/27091",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/feature",
+"topic: Cloudflare Workers"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25799,
+"title": "Conversion failed: expected a string in column 'createdAt', found {} on `adapter-neon`",
+"state": "open",
+"url": "https://github.com/prisma/orm/issues/25799",
+"closed_at": null,
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug",
+"topic: driverAdapters",
+"topic: @prisma/adapter-neon"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 28309,
+"title": "`prisma init` breaks on defined `packageManager`",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/28309",
+"closed_at": "2025-11-17T20:32:19Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/1-unconfirmed",
+"kind/bug",
+"tracked"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 25273,
+"title": "@prisma/adapter-neon ignores schema in the connection string",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/25273",
+"closed_at": "2024-09-27T15:10:33Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 24891,
+"title": "Timed out fetching a new connection from the connection pool",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/24891",
+"closed_at": "2024-08-14T09:30:35Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/0-unknown",
+"kind/bug",
+"tech/engines",
+"topic: connection pool"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 24346,
+"title": "`next build` shows warning about `@prisma/debug`: `A Node.js API is used (process.stdout at line: 68) which is not supported in the Edge Runtime.`",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/24346",
+"closed_at": "2024-07-09T10:49:42Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"bug/2-confirmed",
+"kind/bug",
+"topic: Next.js",
+"topic: deployment/vercel",
+"topic: Next.js middleware",
+"topic: Vercel Edge Runtime"
+]
+},
+{
+"repo": "prisma/orm",
+"number": 23798,
+"title": "[BUG] [PRISMA STUDIO] [PRISMA GENERATE]",
+"state": "closed",
+"url": "https://github.com/prisma/orm/issues/23798",
+"closed_at": "2024-04-10T08:07:14Z",
+"tag": "prisma-nextjs-app-router",
+"labels": [
+"kind/bug"
+]
+}
+]
