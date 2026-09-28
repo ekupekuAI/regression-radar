@@ -30,3 +30,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# TypeScript incremental build cache
+*.tsbuildinfo
