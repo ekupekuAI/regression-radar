@@ -123,8 +123,8 @@ Now each verdict is its own memory with structured tags. On recall, it is counte
 
 | | Issue numbers cited | Verifiable against the snapshot |
 |---|---|---|
-| Memory off (typical run) | 1–2 | **0** |
-| Memory on (typical run) | 7–12 | **all shown** (unverifiable ones are dropped) |
+| Memory off (across our runs) | 0–5 | **0, every time** |
+| Memory on (across our runs) | 7–12 | **all shown** (unverifiable ones are dropped) |
 
 "Not verifiable" means the number is not in our 98-issue snapshot. It does not prove the number is invented, so we never claim that it is.
 

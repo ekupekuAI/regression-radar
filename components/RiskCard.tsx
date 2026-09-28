@@ -165,7 +165,7 @@ export function RiskCard({ risk, onFeedback, sent, pending = false, disabled = f
               onClick={() => handleFeedback(true)}
               aria-pressed={sent === "hit"}
               disabled={locked}
-              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer disabled:cursor-default focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
+              className={`inline-flex min-h-10 sm:min-h-0 items-center gap-1.5 rounded-md border px-3 sm:px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer disabled:cursor-default focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
                 sent === "hit"
                   ? "border-neutral-900 bg-neutral-900 text-white"
                   : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:hover:bg-white"
@@ -185,7 +185,7 @@ export function RiskCard({ risk, onFeedback, sent, pending = false, disabled = f
               onClick={() => handleFeedback(false)}
               aria-pressed={sent === "fine"}
               disabled={locked}
-              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer disabled:cursor-default focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
+              className={`inline-flex min-h-10 sm:min-h-0 items-center gap-1.5 rounded-md border px-3 sm:px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer disabled:cursor-default focus:outline-hidden focus:ring-1 focus:ring-neutral-900 ${
                 sent === "fine"
                   ? "border-neutral-900 bg-neutral-900 text-white"
                   : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 disabled:hover:bg-white"
