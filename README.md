@@ -196,6 +196,10 @@ Next.js 14 (App Router) on Vercel · Hindsight Cloud for memory (`retain`, `reca
 - **Feedback is anonymous and unweighted.** One report counts the same as any other. At scale that needs identity and weighting.
 - **Answers vary between runs.** The model is guided toward the 5–8 most relevant results, but which ones make the cut still shifts a little. Confirmed warnings are pinned, so they never drop out.
 
+## Team
+
+Built by Ekansh, Shreya, Chandana and Meghana.
+
 ## Links
 
 - Hindsight on GitHub: https://github.com/vectorize-io/hindsight
