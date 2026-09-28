@@ -108,7 +108,7 @@ The mental model gets the same treatment. Its first draft repeated the wrong sta
 
 ### 2. Feedback is stored as structure and applied in code
 
-The first version of the learning loop passed developer outcomes to the model as context and asked it to use them. It did not do this reliably. A warning a developer said "did not happen" kept high confidence, and a confirmed one sometimes vanished from the next answer.
+The first version of the learning loop passed developer outcomes to the model as context and asked it to act on them. It didn't follow the instructions: a warning a developer had confirmed came back with no mention of the confirmation, and a single report was counted as six, because Hindsight splits one report into several facts and observations. And since the model decides which warnings to include, nothing stopped a confirmed warning from dropping out of a later answer.
 
 Now each verdict is its own memory with structured tags. On recall, it is counted **once per report**, because Hindsight splits one report into several facts and also consolidates reports into observations. The tally is applied deterministically:
 
