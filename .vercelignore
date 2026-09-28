@@ -1,0 +1,12 @@
+# Keys go in as Vercel environment variables, never as an uploaded file.
+.env
+.env.*
+!.env.example
+
+# Not needed at runtime
+*.docx
+*.py
+__pycache__/
+raw_issues.jsonl
+node_modules/
+.next/

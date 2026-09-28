@@ -27,3 +27,6 @@ Thumbs.db
 # Next.js build output
 .next/
 next-env.d.ts
+
+.vercel
+.env*
