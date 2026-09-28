@@ -5,26 +5,30 @@ import { BookmarkPlus, Send, Check } from "lucide-react";
 
 interface LearnFormProps {
   stack?: string;
-  onSave?: (note: string) => void;
-  isLoading?: boolean;
+  /** Resolves true once the note is actually stored in memory. */
+  onSave?: (note: string) => Promise<boolean>;
 }
 
-export function LearnForm({
-  stack = "Next.js 14.1 to 14.2, app router + Prisma",
-  onSave,
-  isLoading = false,
-}: LearnFormProps) {
+export function LearnForm({ stack = "Next.js 14.1 to 14.2, app router + Prisma", onSave }: LearnFormProps) {
   const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const isLoading = saving;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!note.trim()) return;
+    if (!note.trim() || !onSave || saving) return;
 
-    if (onSave) {
-      onSave(note.trim());
+    setSaving(true);
+    setFailed(false);
+    const ok = await onSave(note.trim());
+    setSaving(false);
+
+    if (!ok) {
+      setFailed(true);
+      return;
     }
-
     setSavedSuccess(true);
     setTimeout(() => {
       setSavedSuccess(false);
@@ -69,18 +73,22 @@ export function LearnForm({
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-neutral-400">
-              Outcomes are stored in Hindsight memory with verified snapshot tags.
+            <span className={`text-[11px] ${failed ? "text-red-700" : "text-neutral-400"}`} aria-live="polite">
+              {failed
+                ? "Couldn't save that to memory. Please try again."
+                : "Your note is stored in Hindsight memory. Use the buttons on each warning for a quick yes or no."}
             </span>
             <button
               type="submit"
               disabled={isLoading || !note.trim()}
               className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-neutral-800 focus:outline-hidden focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 disabled:opacity-40 transition-colors cursor-pointer"
             >
-              {savedSuccess ? (
+              {saving ? (
+                <span>Saving…</span>
+              ) : savedSuccess ? (
                 <>
                   <Check className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Saved to memory!</span>
+                  <span>Saved to memory</span>
                 </>
               ) : (
                 <>

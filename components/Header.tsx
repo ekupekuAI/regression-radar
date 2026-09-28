@@ -28,7 +28,7 @@ export function Header() {
           <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-700">
             <ShieldCheck className="h-3.5 w-3.5 text-neutral-600" />
             <span className="font-mono font-semibold text-neutral-900">98</span>
-            <span className="hidden xs:inline text-neutral-600">verified bug reports</span>
+            <span className="hidden sm:inline text-neutral-600">verified bug reports</span>
           </div>
         </div>
       </div>

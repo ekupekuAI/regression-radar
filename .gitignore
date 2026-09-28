@@ -33,3 +33,6 @@ next-env.d.ts
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+# Local tooling
+.claude/
