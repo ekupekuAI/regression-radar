@@ -200,6 +200,15 @@ Next.js 14 (App Router) on Vercel · Hindsight Cloud for memory (`retain`, `reca
 
 Built by Ekansh, Shreya, Chandana and Meghana.
 
+## Write-ups
+
+| | Article | LinkedIn | Reddit |
+|---|---|---|---|
+| Ekansh | [Hindsight finds the bug reports. My code decides what's true.](https://dev.to/ekansh2008/hindsight-finds-the-bug-reports-my-code-decides-whats-true-360f) | [Post](https://www.linkedin.com/feed/update/urn:li:activity:7510398203381506048/) | [r/LLMDevs](https://www.reddit.com/r/LLMDevs/comments/1wslzfp/hindsight_finds_the_bug_reports_my_code_decides/) |
+| Shreya | [I tried sorting agent memory by hand. Hindsight did better.](https://dev.to/shreyaagraa/i-tried-sorting-agent-memory-by-hand-hindsight-did-better-1old) | [Post](https://www.linkedin.com/feed/update/urn:li:activity:7510396652134752257/) | [r/AIMemory](https://www.reddit.com/r/AIMemory/comments/1wsm0st/i_tried_sorting_agent_memory_by_hand_hindsight/) |
+| Chandana | [Dependabot gives pass rates. Our Hindsight agent remembers what broke.](https://dev.to/chandanabonbon/dependabot-gives-pass-rates-our-hindsight-agent-remembers-what-broke-728) | [Post](https://www.linkedin.com/feed/update/urn:li:activity:7510408391261945857/) | |
+| Meghana | [Our Hindsight playbook rewrote itself within 22 seconds](https://dev.to/nenavathmeghanarathoddot/our-hindsight-playbook-rewrote-itself-within-22-seconds-l6j) | [Post](https://www.linkedin.com/feed/update/urn:li:activity:7510393480532328449/) | |
+
 ## Links
 
 - Hindsight on GitHub: https://github.com/vectorize-io/hindsight
