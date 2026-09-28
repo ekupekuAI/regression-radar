@@ -15,6 +15,8 @@ Run:
     python load_to_hindsight.py load                  push raw_issues.jsonl
     python load_to_hindsight.py brief "Next.js 14.1 -> 14.2, app router + Prisma"
     python load_to_hindsight.py learn "middleware did not break, hydration did"
+    python load_to_hindsight.py reset-feedback        dry run: list recorded outcomes
+    python load_to_hindsight.py reset-feedback --yes  delete them - run before recording the demo
 """
 
 import json
@@ -149,6 +151,51 @@ def brief(stack):
     print(getattr(answer, "text", answer))
 
 
+def reset_feedback(confirm):
+    """Remove every document that is not part of the committed snapshot - all
+    recorded upgrade outcomes and any test data - leaving the 98 real issues.
+
+    Run it right before recording the demo, so the before/after starts from a
+    memory nobody has given feedback to yet. Dry run unless --yes is passed.
+    """
+    import asyncio
+
+    with open(RAW_PATH, encoding="utf-8") as f:
+        snapshot = {
+            f"{r['repo']}#{r['number']}"
+            for r in (json.loads(line) for line in f if line.strip())
+        }
+
+    async def run():
+        ids, offset = [], 0
+        while True:
+            resp = await client.documents.list_documents(
+                bank_id=BANK_ID, q=None, limit=200, offset=offset
+            )
+            d = resp.to_dict() if hasattr(resp, "to_dict") else dict(resp)
+            items = d.get("items") or []
+            ids += [it.get("id") or it.get("document_id") for it in items]
+            if len(items) < 200:
+                break
+            offset += 200
+
+        extra = [i for i in ids if i and i not in snapshot]
+        print(f"{len(ids)} documents: {len(ids) - len(extra)} from the snapshot, "
+              f"{len(extra)} recorded outcomes or test data.")
+        for i in extra:
+            print("  ", i)
+        if not extra:
+            return
+        if not confirm:
+            print("\nDry run - nothing deleted. Re-run with --yes to delete these.")
+            return
+        for i in extra:
+            await client.documents.delete_document(bank_id=BANK_ID, document_id=i)
+            print("deleted", i)
+
+    asyncio.run(run())
+
+
 def learn(outcome):
     """Feeds the real outcome back in. This is the 'gets better over time' part."""
     client.retain(
@@ -174,5 +221,7 @@ if __name__ == "__main__":
         brief(rest)
     elif cmd == "learn":
         learn(rest)
+    elif cmd == "reset-feedback":
+        reset_feedback("--yes" in sys.argv[2:])
     else:
         print(f"Unknown command: {cmd}")

@@ -14,6 +14,12 @@ export type MemoryEvent = {
   breakdown?: Record<string, number>;
 };
 
+/** One developer's verdict on one warning: did it actually happen to them? */
+export type Feedback = { number: number; happened: boolean };
+
+/** Per issue number: separate reports saying it hit them, and saying it did not. */
+export type Tally = Record<number, { hit: number; fine: number }>;
+
 function headers() {
   return {
     "Content-Type": "application/json",
@@ -47,6 +53,7 @@ const RISK_SCHEMA = {
     summary: { type: "string" },
     risks: {
       type: "array",
+      maxItems: 8,
       items: {
         type: "object",
         properties: {
@@ -69,10 +76,91 @@ export type RawRisk = {
   issue_numbers: number[];
 };
 
+type RecallResult = {
+  type?: string;
+  text?: string;
+  tags?: string[] | null;
+  document_id?: string | null;
+};
+
+/**
+ * Everything developers have reported after doing this kind of upgrade.
+ *
+ * Each report is written with structured tags - issue:NNN and happened:yes|no
+ * - and the tally is read from those tags, never from prose. It is the same
+ * rule as fixed/open: the model was given the outcomes as context and asked
+ * to act on them, and it didn't reliably, so the part that has to be right
+ * is done in code. The outcomes still go to reflect() as context, where they
+ * can help the model reason about related issues.
+ *
+ * Hindsight turns one report into several facts, and consolidates reports
+ * into observations. So reports are counted once per document_id, and
+ * observations (which have none) are shown but never counted.
+ */
+async function recallOutcomes(stack: string): Promise<{
+  tally: Tally;
+  reports: number;
+  observations: string[];
+  statements: string[];
+}> {
+  const tally: Tally = {};
+  const counted = new Set<string>();
+  const docs = new Set<string>();
+  const observations: string[] = [];
+  const statements: string[] = [];
+
+  try {
+    const rec = await call("/memories/recall", {
+      query: stack,
+      tags: ["outcome"],
+      tags_match: "any_strict",
+      budget: "mid",
+      max_tokens: 4000,
+    });
+
+    for (const r of (rec.results ?? []) as RecallResult[]) {
+      const text = (r.text ?? "").split(" | ")[0].trim();
+      const doc = r.document_id ?? "";
+
+      if (!doc) {
+        if (text) observations.push(text);
+        continue;
+      }
+      docs.add(doc);
+      if (text) statements.push(text);
+
+      const tags = r.tags ?? [];
+      const issueTag = tags.find((t) => t.startsWith("issue:"));
+      const happenedTag = tags.find((t) => t.startsWith("happened:"));
+      if (!issueTag || !happenedTag) continue;
+
+      const key = `${doc}|${issueTag}`;
+      if (counted.has(key)) continue;
+      counted.add(key);
+
+      const n = Number(issueTag.slice("issue:".length));
+      if (!Number.isFinite(n)) continue;
+      tally[n] ??= { hit: 0, fine: 0 };
+      if (happenedTag === "happened:yes") tally[n].hit += 1;
+      else tally[n].fine += 1;
+    }
+  } catch {
+    // Non-fatal: the briefing still works without past outcomes.
+  }
+
+  return {
+    tally,
+    reports: docs.size,
+    observations: Array.from(new Set(observations)).slice(0, 4),
+    statements: Array.from(new Set(statements)).slice(0, 8),
+  };
+}
+
 export async function reflectRisks(stack: string): Promise<{
   summary: string;
   risks: RawRisk[];
   events: MemoryEvent[];
+  tally: Tally;
 }> {
   const now = () => new Date().toISOString();
   const events: MemoryEvent[] = [];
@@ -80,7 +168,9 @@ export async function reflectRisks(stack: string): Promise<{
   const query =
     `A developer is about to perform this upgrade: ${stack}. ` +
     `Using only the real bug reports you remember, list the specific things ` +
-    `likely to break for this stack. For each one give a short title, a one ` +
+    `likely to break for this stack - aim for the 5 to 8 most relevant, most ` +
+    `relevant first, and fewer only if memory genuinely holds fewer. ` +
+    `For each one give a short title, a one ` +
     `sentence explanation of why it affects this stack, how confident you are, ` +
     `and the GitHub issue numbers it comes from. Never invent an issue number. ` +
     `Do not say whether something is fixed - only which issues it came from.`;
@@ -95,7 +185,7 @@ export async function reflectRisks(stack: string): Promise<{
       budget: "mid",
       max_tokens: 3000,
     });
-    recalled = (rec.results ?? []).map((r: { type?: string; text?: string }) => ({
+    recalled = (rec.results ?? []).map((r: RecallResult) => ({
       type: r.type ?? "unknown",
       text: (r.text ?? "").split(" | ")[0].slice(0, 180),
     }));
@@ -118,10 +208,33 @@ export async function reflectRisks(stack: string): Promise<{
     at: now(),
   });
 
+  const { tally, reports, observations, statements } = await recallOutcomes(stack);
+  if (reports > 0) {
+    const samples = [
+      ...observations.slice(0, 1).map((text) => ({ type: "observation", text })),
+      ...statements.slice(0, 2).map((text) => ({ type: "experience", text })),
+    ];
+    events.push({
+      type: "recall",
+      hits: reports,
+      samples,
+      note: `found ${reports} report${reports === 1 ? "" : "s"} from developers who already did this upgrade`,
+      at: now(),
+    });
+  }
+
+  const context =
+    statements.length === 0
+      ? undefined
+      : "Developers who already did a similar upgrade reported:\n" +
+        statements.map((s, i) => `${i + 1}. ${s}`).join("\n") +
+        "\nTake these into account when judging what is likely to break.";
+
   const data = await call("/reflect", {
     query,
     budget: "high",
     response_schema: RISK_SCHEMA,
+    ...(context ? { context } : {}),
   });
 
   const structured = data.structured_output ?? {};
@@ -138,36 +251,70 @@ export async function reflectRisks(stack: string): Promise<{
     summary: typeof structured.summary === "string" ? structured.summary : "",
     risks,
     events,
+    tally,
   };
 }
 
 /**
- * What actually happened after the upgrade. This is the half that makes the
- * next answer better than this one: the outcome goes back in as the bank's own
- * experience, so a warning that keeps proving wrong stops being repeated.
+ * What actually happened after the upgrade - the half that makes the next
+ * answer better than this one. Each verdict is stored as its own memory with
+ * structured tags, so it can be counted exactly when it is recalled.
  */
-export async function retainOutcome(stack: string, outcome: string): Promise<MemoryEvent> {
-  await fetch(`${BASE}/v1/default/banks/${BANK_ID}/memories`, {
+export async function retainOutcome(
+  stack: string,
+  feedback: Feedback[],
+  note: string
+): Promise<MemoryEvent> {
+  const stamp = Date.now();
+  const at = new Date().toISOString();
+
+  const items: Record<string, unknown>[] = feedback.map((f) => ({
+    content:
+      `[upgrade-outcome] Upgrade: ${stack}. A developer who did this upgrade ` +
+      `reported that GitHub issue #${f.number} ` +
+      (f.happened ? "DID happen to them." : "did NOT affect them."),
+    timestamp: at,
+    document_id: `outcome-${stamp}-${f.number}`,
+    tags: ["outcome", `issue:${f.number}`, `happened:${f.happened ? "yes" : "no"}`],
+  }));
+
+  if (note) {
+    items.push({
+      content:
+        `[upgrade-outcome] Upgrade: ${stack}. What actually happened, reported ` +
+        `by the developer who did it: ${note}`,
+      timestamp: at,
+      document_id: `outcome-${stamp}-note`,
+      tags: ["outcome", "note"],
+    });
+  }
+
+  if (items.length === 0) throw new Error("Nothing to record.");
+
+  const r = await fetch(`${BASE}/v1/default/banks/${BANK_ID}/memories`, {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({
-      items: [
-        {
-          content:
-            `[upgrade-outcome] A developer who followed our briefing for "${stack}" ` +
-            `reported what actually happened: ${outcome}`,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-      async: true,
-    }),
-  }).then((r) => {
-    if (!r.ok) throw new Error(`Hindsight retain failed: ${r.status}`);
+    // Synchronous on purpose: the demo asks the same question straight after
+    // recording an outcome, and the answer has to reflect it.
+    body: JSON.stringify({ items, async: false }),
   });
+  if (!r.ok) {
+    const detail = await r.text().catch(() => "");
+    throw new Error(`Hindsight retain failed: ${r.status} ${detail.slice(0, 200)}`);
+  }
+
+  const hit = feedback.filter((f) => f.happened).length;
+  const fine = feedback.length - hit;
+  const parts = [
+    hit ? `${hit} confirmed` : "",
+    fine ? `${fine} did not happen` : "",
+    note ? "a note" : "",
+  ].filter(Boolean);
 
   return {
     type: "retain",
-    note: `outcome recorded: ${outcome.slice(0, 80)}`,
-    at: new Date().toISOString(),
+    hits: items.length,
+    note: `recorded ${parts.join(", ")}`,
+    at,
   };
 }
