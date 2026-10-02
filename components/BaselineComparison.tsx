@@ -27,6 +27,8 @@ export interface BriefCitations {
 export interface BaselineData {
   answer: string;
   citations: { total: number; verified: number; numbers: number[] };
+  /** Present when the answer is a recorded run rather than a live call. */
+  recorded?: { at: string; model: string; query: string };
 }
 
 interface BaselineComparisonProps {
@@ -197,6 +199,18 @@ export function BaselineComparison({
                             .join(", ")}) could be verified against our snapshot.`
                         : `${offVerified} of its ${offCited} cited issues could be verified against our snapshot.`}
                     </p>
+                    {memoryOff.recorded && (
+                      <p className="mt-2 text-[11px] leading-relaxed text-neutral-500">
+                        Recorded answer from {memoryOff.recorded.model},{" "}
+                        {new Date(memoryOff.recorded.at).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          timeZone: "UTC",
+                        })}
+                        , to “{memoryOff.recorded.query}”. The public site doesn&apos;t call the model live.
+                      </p>
+                    )}
                     <button
                       type="button"
                       onClick={() => setShowAnswer((v) => !v)}

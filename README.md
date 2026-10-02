@@ -123,10 +123,14 @@ Now each verdict is its own memory with structured tags. On recall, it is counte
 
 | | Issue numbers cited | Verifiable against the snapshot |
 |---|---|---|
-| Memory off (across our runs) | 0–5 | **0, every time** |
+| Memory off (across our runs) | 0–12 | **0, every time** |
 | Memory on (across our runs) | 7–12 | **all shown** (unverifiable ones are dropped) |
 
 "Not verifiable" means the number is not in our 98-issue snapshot. It does not prove the number is invented, so we never claim that it is.
+
+Early runs capped the answer at 900 tokens. That cap also covers the model's hidden reasoning, so some answers were cut off before they cited anything. The cap is now 4,000. Given room to finish, the model cited 12 issue numbers, and none of them could be verified.
+
+The public site serves that complete run, recorded on 2 October 2026 ([`data/baseline-recorded.json`](data/baseline-recorded.json)), rather than calling the model on every check, so anyone with the link isn't spending model quota. The interface labels it as recorded. Set `BASELINE_LIVE=on` to call the model live.
 
 ---
 
@@ -172,7 +176,8 @@ npm run dev                            # http://localhost:3000
 | Variable | Purpose |
 |---|---|
 | `HINDSIGHT_API_URL`, `HINDSIGHT_API_KEY` | Hindsight Cloud instance. The loader and the app must point at the same one. |
-| `GROQ_API_KEY` | The memory-off baseline (`openai/gpt-oss-120b` on Groq) |
+| `GROQ_API_KEY` | The memory-off baseline (`openai/gpt-oss-120b` on Groq), used only when `BASELINE_LIVE=on` |
+| `BASELINE_LIVE` | `on` calls the model live for the memory-off baseline. Anything else serves the recorded run. |
 | `GITHUB_TOKEN` | Only for re-fetching the data |
 
 `python load_to_hindsight.py reset-feedback --yes` deletes every document that is not part of the snapshot and has Hindsight rewrite the playbook. Use it before a demo, so the before/after starts from memory nobody has given feedback to yet. Without `--yes` it is a dry run.
@@ -183,7 +188,7 @@ npm run dev                            # http://localhost:3000
 |---|---|---|
 | `POST /api/brief` | `{ stack }` | `risks[]`, `citations`, `memory_events[]`, `playbook` |
 | `POST /api/learn` | `{ stack, feedback: [{ number, happened }], outcome? }` | `recorded`, `rejected`, `memory_events[]` |
-| `POST /api/baseline` | `{ stack }` | the no-memory `answer`, `citations` |
+| `POST /api/baseline` | `{ stack }` | the no-memory `answer`, `citations`, and `recorded` when it is the recorded run |
 
 ## Stack
 
