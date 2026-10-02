@@ -1,11 +1,29 @@
 import { NextResponse } from "next/server";
 import { lookup } from "@/lib/groundTruth";
+import recorded from "@/data/baseline-recorded.json";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = process.env.GROQ_MODEL ?? "openai/gpt-oss-120b";
+
+// The site is public, so a live call on every check spends model quota for
+// anyone with the link. Unless BASELINE_LIVE=on, answer with one recorded,
+// complete run of the same question instead, checked exactly the same way.
+const LIVE = process.env.BASELINE_LIVE === "on";
+
+// The model cites in several shapes: "#64603", "issues/64603" inside a
+// link, "issue 64603". Catch all of them, or the comparison undercounts.
+function verify(answer: string) {
+  const cited = Array.from(
+    new Set(
+      Array.from(answer.matchAll(/(?:#|issues\/|issue\s+#?)(\d{4,6})\b/gi)).map((m) => Number(m[1]))
+    )
+  );
+  const verified = cited.filter((n) => lookup(n));
+  return { total: cited.length, verified: verified.length, numbers: cited };
+}
 
 /**
  * The "memory off" half of the comparison: the same question sent to a
@@ -29,6 +47,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Describe the upgrade you are about to do." }, { status: 400 });
   }
 
+  if (!LIVE) {
+    return NextResponse.json({
+      query: recorded.query,
+      memory: false,
+      answer: recorded.answer,
+      citations: verify(recorded.answer),
+      recorded: { at: recorded.recordedAt, model: recorded.model, query: recorded.query },
+      memory_events: [
+        {
+          type: "recall",
+          hits: 0,
+          note: `memory off: a recorded answer from ${recorded.model}, which has no memory`,
+          at: new Date().toISOString(),
+        },
+      ],
+    });
+  }
+
   const key = process.env.GROQ_API_KEY;
   if (!key) {
     return NextResponse.json({ error: "GROQ_API_KEY is not configured." }, { status: 500 });
@@ -40,7 +76,9 @@ export async function POST(req: Request) {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 900,
+        // Room to finish: the limit also covers the model's hidden reasoning,
+        // and at 900 answers were cut off before they could cite anything.
+        max_tokens: 4000,
         messages: [
           {
             role: "user",
@@ -61,26 +99,11 @@ export async function POST(req: Request) {
     const data = await res.json();
     const answer: string = data?.choices?.[0]?.message?.content ?? "";
 
-    // The model cites in several shapes: "#64603", "issues/64603" inside a
-    // link, "issue 64603". Catch all of them, or the comparison undercounts.
-    const cited = Array.from(
-      new Set(
-        Array.from(answer.matchAll(/(?:#|issues\/|issue\s+#?)(\d{4,6})\b/gi)).map((m) =>
-          Number(m[1])
-        )
-      )
-    );
-    const verified = cited.filter((n) => lookup(n));
-
     return NextResponse.json({
       query: stack,
       memory: false,
       answer,
-      citations: {
-        total: cited.length,
-        verified: verified.length,
-        numbers: cited,
-      },
+      citations: verify(answer),
       memory_events: [
         {
           type: "recall",
