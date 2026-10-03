@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { reflectRisks, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
-import { verifyCitations, verifyPlaybookText, lookup, TOTAL_ISSUES } from "@/lib/groundTruth";
+import {
+  verifyCitations,
+  verifyPlaybookText,
+  lookup,
+  checkScope,
+  COVERAGE,
+  TOTAL_ISSUES,
+} from "@/lib/groundTruth";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -41,6 +48,31 @@ export async function POST(req: Request) {
   }
   if (!stack) {
     return NextResponse.json({ error: "Describe the upgrade you are about to do." }, { status: 400 });
+  }
+
+  // Out-of-scope stacks are answered honestly without consulting memory.
+  // Without this gate the model answered "React 17 to 18 with Vite" with
+  // five Prisma issues, all "verified".
+  const scope = checkScope(stack);
+  if (!scope.inScope) {
+    return NextResponse.json({
+      query: stack,
+      memory: true,
+      citations: { total: 0, verified: 0 },
+      summary: `Nothing in memory matches that stack yet. Memory currently covers ${COVERAGE}.`,
+      model_summary: null,
+      corpus_size: TOTAL_ISSUES,
+      risks: [],
+      playbook: null,
+      memory_events: [
+        {
+          type: "recall",
+          hits: 0,
+          note: `scope check: the stack names none of the technologies in the ${TOTAL_ISSUES}-issue snapshot, so memory was not searched`,
+          at: new Date().toISOString(),
+        } satisfies MemoryEvent,
+      ],
+    });
   }
 
   try {
@@ -175,6 +207,14 @@ export async function POST(req: Request) {
       });
     }
 
+    if (scope.coverageNote) {
+      memory_events.push({
+        type: "reflect",
+        note: `coverage check: the stack names Next.js versions outside the snapshot, so the answer says so instead of pretending`,
+        at: new Date().toISOString(),
+      });
+    }
+
     const open = out.filter((v) => v.status === "open").length;
     const fixed = out.length - open;
 
@@ -188,10 +228,11 @@ export async function POST(req: Request) {
         verified: modelCitations,
       },
       summary:
-        out.length === 0
+        (out.length === 0
           ? "Nothing in memory matches that stack yet."
           : `${out.length} known breakage${out.length === 1 ? "" : "s"} for this combination. ${fixed} fixed, ${open} still open.` +
-            (confirmed ? ` ${confirmed} confirmed by developers who did this upgrade.` : ""),
+            (confirmed ? ` ${confirmed} confirmed by developers who did this upgrade.` : "")) +
+        (scope.coverageNote ? ` ${scope.coverageNote}` : ""),
       model_summary: summary,
       corpus_size: TOTAL_ISSUES,
       risks: out,
