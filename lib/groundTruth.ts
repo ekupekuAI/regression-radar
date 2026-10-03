@@ -27,6 +27,48 @@ export function lookup(number: number): Issue | undefined {
 }
 
 /**
+ * The snapshot only knows two upgrades: Next.js 14.1 to 14.2, and Prisma on
+ * the Next.js App Router. Asked about React + Vite + Redux, the model still
+ * produced five "known breakages", every one a Next.js or Prisma issue - and
+ * each passed verification, because verification only proves a number exists
+ * in the snapshot, not that it answers the question. So the scope rule lives
+ * here in code, like every other rule that has to be right: if the stack
+ * names neither technology we have data on, memory is not consulted at all.
+ */
+const COVERED = [
+  { name: "Next.js", test: /\bnext(?:\s*\.?\s*js)?\b/i },
+  { name: "Prisma", test: /\bprisma\b/i },
+];
+
+export const COVERAGE = "Next.js 14.1 to 14.2, and Prisma on the Next.js App Router";
+
+export function checkScope(stack: string): {
+  inScope: boolean;
+  /** Set when the stack names Next.js versions the snapshot does not cover. */
+  coverageNote: string | null;
+} {
+  const inScope = COVERED.some((c) => c.test.test(stack));
+  if (!inScope) return { inScope, coverageNote: null };
+
+  // "Next.js 13 to 15" should not be answered as if we watched that upgrade.
+  // Any Next.js version mentioned outside 14.x gets a note on the answer.
+  const m = stack.match(
+    /next(?:\s*\.?\s*js)?\s*v?(\d{1,2}(?:\.\d+)?)(?:\s*(?:to|->|–|—|→)\s*v?(\d{1,2}(?:\.\d+)?))?/i
+  );
+  const outside = m
+    ? [m[1], m[2]].filter(Boolean).filter((v) => !/^14(\.\d+)?$/.test(v!) || Number(v) > 14.2)
+    : [];
+
+  return {
+    inScope,
+    coverageNote:
+      outside.length > 0
+        ? `Memory covers ${COVERAGE}. Next.js ${outside.join(" and ")} ${outside.length > 1 ? "are" : "is"} outside that snapshot, so these are the nearest reports, not a record of that exact upgrade.`
+        : null,
+  };
+}
+
+/**
  * The playbook (Hindsight's mental model) is prose the model writes, so it
  * gets the same treatment as every other answer. Its first draft labelled
  * three closed issues OPEN and cited "#84901675" for a problem whose real

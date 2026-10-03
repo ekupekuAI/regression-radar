@@ -10,3 +10,7 @@ __pycache__/
 raw_issues.jsonl
 node_modules/
 .next/
+
+# Remotion lives in its own workspace; it pulls a headless Chrome toolchain
+# that has no business in the deployed bundle.
+video/
