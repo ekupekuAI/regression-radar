@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-label="Same question with and without memory: 0 of 12 citations verifiable versus 8 of 8 checked">
+<title>Same question with and without memory: 0 of 12 citations verifiable versus 8 of 8 checked</title>
+<style>
+text{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif}
+.mono{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace}
+.rip{transform-box:fill-box;transform-origin:center}
+@keyframes k0{0%,3.333%{opacity:0;transform:translateY(8px)}7.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k1{0%,4.667%{opacity:0;transform:translateY(8px)}8.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k2{0%,6.000%{opacity:0;transform:translateY(8px)}9.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k3{0%,7.333%{opacity:0;transform:translateY(8px)}11.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k4{0%,8.667%{opacity:0;transform:translateY(8px)}12.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k5{0%,10.000%{opacity:0;transform:translateY(8px)}13.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k6{0%,11.333%{opacity:0;transform:translateY(8px)}15.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k7{0%,12.667%{opacity:0;transform:translateY(8px)}16.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k8{0%,14.000%{opacity:0;transform:translateY(8px)}17.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k9{0%,15.333%{opacity:0;transform:translateY(8px)}19.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k10{0%,16.667%{opacity:0;transform:translateY(8px)}20.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k11{0%,18.000%{opacity:0;transform:translateY(8px)}21.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k12{0%,21.667%{opacity:0;transform:translateY(8px)}25.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k13{0%,28.333%{opacity:0;transform:translateY(8px)}32.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k14{0%,30.667%{opacity:0;transform:translateY(8px)}34.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k15{0%,33.000%{opacity:0;transform:translateY(8px)}36.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k16{0%,35.333%{opacity:0;transform:translateY(8px)}39.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k17{0%,37.667%{opacity:0;transform:translateY(8px)}41.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k18{0%,40.000%{opacity:0;transform:translateY(8px)}43.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k19{0%,42.333%{opacity:0;transform:translateY(8px)}46.083%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k20{0%,44.667%{opacity:0;transform:translateY(8px)}48.417%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+@keyframes k21{0%,50.000%{opacity:0;transform:translateY(8px)}53.750%,90.833%{opacity:1;transform:translateY(0)}94.583%,100%{opacity:0;transform:translateY(0)}}
+</style>
+<rect width="1200" height="660" fill="#0d1117" rx="22"/>
+<rect x="16" y="16" width="572" height="628" rx="18" fill="#161b22" stroke="#30363d"/>
+<text x="44" y="66" font-size="26" font-weight="700" fill="#e6edf3">Memory off</text>
+<text x="44" y="96" font-size="16" fill="#8b949e">General model, same question · recorded 2 Oct 2026</text>
+<line x1="44" x2="560" y1="118" y2="118" stroke="#30363d"/>
+<line x1="44" x2="560" y1="564" y2="564" stroke="#30363d"/>
+<rect x="612" y="16" width="572" height="628" rx="18" fill="#161b22" stroke="#30363d"/>
+<text x="640" y="66" font-size="26" font-weight="700" fill="#e6edf3">With Regression Radar</text>
+<text x="640" y="96" font-size="16" fill="#8b949e">Hindsight memory · every citation checked against GitHub</text>
+<line x1="640" x2="1156" y1="118" y2="118" stroke="#30363d"/>
+<line x1="640" x2="1156" y1="564" y2="564" stroke="#30363d"/><g style="animation:k0 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="156" class="mono" font-size="18" fill="#8b949e">#55731</text>
+  <text x="560" y="156" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k1 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="190" class="mono" font-size="18" fill="#8b949e">#56102</text>
+  <text x="560" y="190" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k2 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="224" class="mono" font-size="18" fill="#8b949e">#56284</text>
+  <text x="560" y="224" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k3 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="258" class="mono" font-size="18" fill="#8b949e">#56397</text>
+  <text x="560" y="258" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k4 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="292" class="mono" font-size="18" fill="#8b949e">#56433</text>
+  <text x="560" y="292" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k5 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="326" class="mono" font-size="18" fill="#8b949e">#26030</text>
+  <text x="560" y="326" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k6 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="360" class="mono" font-size="18" fill="#8b949e">#26510</text>
+  <text x="560" y="360" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k7 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="394" class="mono" font-size="18" fill="#8b949e">#3429</text>
+  <text x="560" y="394" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k8 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="428" class="mono" font-size="18" fill="#8b949e">#56644</text>
+  <text x="560" y="428" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k9 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="462" class="mono" font-size="18" fill="#8b949e">#56789</text>
+  <text x="560" y="462" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k10 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="496" class="mono" font-size="18" fill="#8b949e">#56912</text>
+  <text x="560" y="496" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k11 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="530" class="mono" font-size="18" fill="#8b949e">#27741</text>
+  <text x="560" y="530" text-anchor="end" font-size="16" fill="#f85149">✕  not in the snapshot</text>
+</g><g style="animation:k12 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="44" y="616" font-size="40" font-weight="800" fill="#f85149">0 of 12</text>
+  <text x="212" y="602" font-size="16" fill="#8b949e">issue numbers it cited could be</text>
+  <text x="212" y="624" font-size="16" fill="#8b949e">verified against the 98-issue snapshot</text>
+</g><g style="animation:k13 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="137" width="66" height="26" rx="13" fill="#12261e" stroke="#238636"/>
+<text x="673" y="154.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#3fb950">FIXED</text>
+  <text x="722" y="156" class="mono" font-size="18" fill="#e6edf3">#64609</text>
+  <text x="798" y="156" font-size="16" fill="#8b949e">Slow transitions, infinite loading on Link</text>
+</g><g style="animation:k14 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="185" width="66" height="26" rx="13" fill="#12261e" stroke="#238636"/>
+<text x="673" y="202.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#3fb950">FIXED</text>
+  <text x="722" y="204" class="mono" font-size="18" fill="#e6edf3">#64433</text>
+  <text x="798" y="204" font-size="16" fill="#8b949e">redirect() fails with parallel routes</text>
+</g><g style="animation:k15 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="233" width="66" height="26" rx="13" fill="#12261e" stroke="#238636"/>
+<text x="673" y="250.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#3fb950">FIXED</text>
+  <text x="722" y="252" class="mono" font-size="18" fill="#e6edf3">#64603</text>
+  <text x="798" y="252" font-size="16" fill="#8b949e">iOS Safari needs 2 taps with prefetch on</text>
+</g><g style="animation:k16 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="281" width="66" height="26" rx="13" fill="#2b2111" stroke="#9e6a03"/>
+<text x="673" y="298.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#d29922">OPEN</text>
+  <text x="722" y="300" class="mono" font-size="18" fill="#e6edf3">#64921</text>
+  <text x="798" y="300" font-size="16" fill="#8b949e">Inconsistent CSS order with App Router</text>
+</g><g style="animation:k17 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="329" width="66" height="26" rx="13" fill="#12261e" stroke="#238636"/>
+<text x="673" y="346.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#3fb950">FIXED</text>
+  <text x="722" y="348" class="mono" font-size="18" fill="#e6edf3">#64419</text>
+  <text x="798" y="348" font-size="16" fill="#8b949e">Upgrade broke how dd-trace compiles</text>
+</g><g style="animation:k18 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="377" width="66" height="26" rx="13" fill="#12261e" stroke="#238636"/>
+<text x="673" y="394.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#3fb950">FIXED</text>
+  <text x="722" y="396" class="mono" font-size="18" fill="#e6edf3">#64434</text>
+  <text x="798" y="396" font-size="16" fill="#8b949e">ERR_REQUIRE_ESM on shiki with 14.2.x</text>
+</g><g style="animation:k19 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="425" width="66" height="26" rx="13" fill="#12261e" stroke="#238636"/>
+<text x="673" y="442.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#3fb950">FIXED</text>
+  <text x="722" y="444" class="mono" font-size="18" fill="#e6edf3">#27867</text>
+  <text x="798" y="444" font-size="16" fill="#8b949e">DATABASE_URL not found on Vercel</text>
+</g><g style="animation:k20 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <rect x="640" y="473" width="66" height="26" rx="13" fill="#2b2111" stroke="#9e6a03"/>
+<text x="673" y="490.5" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1" fill="#d29922">OPEN</text>
+  <text x="722" y="492" class="mono" font-size="18" fill="#e6edf3">#26946</text>
+  <text x="798" y="492" font-size="16" fill="#8b949e">Generated Prisma types missing fields</text>
+</g><g style="animation:k21 12s cubic-bezier(.2,.7,.2,1) infinite">
+  <text x="640" y="616" font-size="40" font-weight="800" fill="#3fb950">8 of 8</text>
+  <text x="786" y="602" font-size="16" fill="#8b949e">checked against GitHub before you see them</text>
+  <text x="786" y="624" font-size="16" fill="#8b949e">fixed or open comes from GitHub, never the model</text>
+</g>
+</svg>
