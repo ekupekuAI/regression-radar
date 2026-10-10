@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { AlertCircle, Loader2, RotateCcw } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { AlertCircle, Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { StackForm } from "@/components/StackForm";
 import { RiskList } from "@/components/RiskList";
@@ -26,26 +26,60 @@ type BriefResponse = {
   risks: Risk[];
   memory_events: MemoryEventItem[];
   playbook: PlaybookData | null;
+  stack?: { slug: string; label: string; repo: string };
 };
 
 const DEFAULT_STACK = "Next.js 14.1 to 14.2";
 
-// The real steps /api/brief goes through, shown in order while it works.
-const STEPS = [
+// Steps shown while querying the committed 98-issue snapshot.
+const STEPS_SNAPSHOT = [
   "Searching memory of 98 bug reports",
   "Reading what memory found",
   "Checking every issue number against GitHub",
 ];
 
-async function postJSON<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(path, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || data?.error) {
-    throw new Error(data?.error || `Request failed (${res.status}). Please try again.`);
+// Steps shown when learning on-demand libraries from GitHub.
+const STEPS_LEARN = [
+  "Learning real issues from GitHub into memory",
+  "Searching memory of bug reports",
+  "Reading what memory found",
+  "Checking citations against GitHub repository",
+];
+
+function isExternalStack(s: string): boolean {
+  if (/next(\.js|js)?\b|prisma/i.test(s)) return false;
+  return (
+    /pydantic|numpy|pandas/i.test(s) ||
+    /\b([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)\b/.test(s)
+  );
+}
+
+async function postJSON<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal,
+    });
+  } catch (networkErr) {
+    if (networkErr instanceof Error && networkErr.name === "AbortError") {
+      throw networkErr;
+    }
+    throw new Error("Network error. Please check your connection and try again.");
+  }
+
+  let data: any;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
+
+  if (!res.ok || !data || data?.error) {
+    const errorMsg = data?.error || `Request failed (${res.status}). Please try again.`;
+    throw new Error(errorMsg);
   }
   return data as T;
 }
@@ -74,6 +108,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [baselineLoading, setBaselineLoading] = useState(false);
   const [step, setStep] = useState(0);
+  const [activeSteps, setActiveSteps] = useState(STEPS_SNAPSHOT);
   const [error, setError] = useState<string | null>(null);
   const [baselineError, setBaselineError] = useState<string | null>(null);
   const [laterEvents, setLaterEvents] = useState<MemoryEventItem[]>([]);
@@ -81,56 +116,138 @@ export default function Home() {
   const [pending, setPending] = useState<string | null>(null);
   const [askAgain, setAskAgain] = useState(false);
 
-  useEffect(() => {
-    if (!loading) return;
+  // Lifecyle and concurrency refs to prevent duplicate requests and timer leaks
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isSubmittingRef = useRef(false);
+  const isMountedRef = useRef(true);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const startTimer = (totalSteps: number) => {
+    clearTimer();
     setStep(0);
-    const timer = setInterval(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)), 6000);
-    return () => clearInterval(timer);
-  }, [loading]);
+    timerRef.current = setInterval(() => {
+      if (!isMountedRef.current) return;
+      setStep((s) => Math.min(s + 1, totalSteps - 1));
+    }, 6000);
+  };
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      clearTimer();
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
+  }, []);
 
   const runBrief = async (
     s: string,
-    details?: { library?: string; fromVersion?: string; toVersion?: string }
+    details?: { library?: string; fromVersion?: string; toVersion?: string },
+    signal?: AbortSignal
   ) => {
+    const isExternal = isExternalStack(s);
+    const steps = isExternal ? STEPS_LEARN : STEPS_SNAPSHOT;
+    setActiveSteps(steps);
     setLoading(true);
     setError(null);
     setAskAgain(false);
+    startTimer(steps.length);
+
     try {
-      const data = await postJSON<BriefResponse>("/api/brief", {
-        stack: s,
-        library: details?.library ?? currentDetails.library,
-        fromVersion: details?.fromVersion ?? currentDetails.fromVersion,
-        toVersion: details?.toVersion ?? currentDetails.toVersion,
-      });
+      // For on-demand external stacks (Pydantic, NumPy, pandas, or custom owner/repo),
+      // learn their real issues from GitHub first so memory can reflect real breakages.
+      if (isExternal) {
+        try {
+          const learnData = await postJSON<{
+            memory_events?: MemoryEventItem[];
+            learned?: number;
+            stack?: { slug: string; label: string; repo: string };
+          }>("/api/learn-stack", { stack: s }, signal);
+
+          if (isMountedRef.current && learnData?.memory_events) {
+            setLaterEvents((prev) => [...prev, ...(learnData.memory_events ?? [])]);
+            setStep((prev) => Math.max(prev, 1));
+          }
+        } catch (learnErr) {
+          if (learnErr instanceof Error && learnErr.name === "AbortError") {
+            throw learnErr;
+          }
+          console.warn("Learning step note:", learnErr);
+        }
+      }
+
+      const data = await postJSON<BriefResponse>(
+        "/api/brief",
+        {
+          stack: s,
+          library: details?.library ?? currentDetails.library,
+          fromVersion: details?.fromVersion ?? currentDetails.fromVersion,
+          toVersion: details?.toVersion ?? currentDetails.toVersion,
+        },
+        signal
+      );
+
+      if (!isMountedRef.current) return;
       setBrief(data);
       setLaterEvents([]);
       setSent({});
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+      if (e instanceof Error && e.name === "AbortError") {
+        return;
+      }
+      if (isMountedRef.current) {
+        setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+        clearTimer();
+      }
+      isSubmittingRef.current = false;
     }
   };
 
   const runBaseline = async (
     s: string,
-    details?: { library?: string; fromVersion?: string; toVersion?: string }
+    details?: { library?: string; fromVersion?: string; toVersion?: string },
+    signal?: AbortSignal
   ) => {
     setBaselineLoading(true);
     setBaselineError(null);
     try {
-      setBaseline(
-        await postJSON<BaselineData>("/api/baseline", {
+      const data = await postJSON<BaselineData>(
+        "/api/baseline",
+        {
           stack: s,
           library: details?.library ?? currentDetails.library,
           fromVersion: details?.fromVersion ?? currentDetails.fromVersion,
           toVersion: details?.toVersion ?? currentDetails.toVersion,
-        })
+        },
+        signal
       );
+      if (!isMountedRef.current) return;
+      setBaseline(data);
     } catch (e) {
-      setBaselineError(e instanceof Error ? e.message : "The comparison failed. Please try again.");
+      if (e instanceof Error && e.name === "AbortError") {
+        return;
+      }
+      if (isMountedRef.current) {
+        setBaselineError(e instanceof Error ? e.message : "The comparison failed. Please try again.");
+      }
     } finally {
-      setBaselineLoading(false);
+      if (isMountedRef.current) {
+        setBaselineLoading(false);
+      }
     }
   };
 
@@ -138,12 +255,68 @@ export default function Home() {
     s: string,
     details?: { library: string; fromVersion: string; toVersion: string }
   ) => {
+    if (loading || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
+    // Cancel prior requests and timer before initiating new check
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    clearTimer();
+
     setStack(s);
     if (details) {
       setCurrentDetails(details);
     }
-    runBrief(s, details);
-    runBaseline(s, details);
+    runBrief(s, details, controller.signal);
+    runBaseline(s, details, controller.signal);
+  };
+
+  const handleLearnStack = async (s: string) => {
+    if (loading || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    clearTimer();
+
+    setActiveSteps(STEPS_LEARN);
+    setLoading(true);
+    setError(null);
+    startTimer(STEPS_LEARN.length);
+
+    try {
+      const learnData = await postJSON<{
+        memory_events?: MemoryEventItem[];
+        learned?: number;
+      }>("/api/learn-stack", { stack: s }, controller.signal);
+
+      if (isMountedRef.current && learnData?.memory_events) {
+        setLaterEvents((prev) => [...prev, ...(learnData.memory_events ?? [])]);
+      }
+      if (isMountedRef.current) {
+        setStep(1);
+      }
+      await runBrief(s, currentDetails, controller.signal);
+    } catch (e) {
+      if (e instanceof Error && e.name === "AbortError") {
+        return;
+      }
+      if (isMountedRef.current) {
+        setError(e instanceof Error ? e.message : "Learning failed. Please try again.");
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setLoading(false);
+        clearTimer();
+      }
+      isSubmittingRef.current = false;
+    }
   };
 
   const handleFeedback = async (riskId: string, happened: boolean) => {
@@ -159,13 +332,18 @@ export default function Home() {
         toVersion: currentDetails.toVersion,
         feedback: [{ number: risk.sources[0].number, happened }],
       });
+      if (!isMountedRef.current) return;
       setSent((prev) => ({ ...prev, [riskId]: happened ? "hit" : "fine" }));
       setLaterEvents((prev) => [...prev, ...(data.memory_events ?? [])]);
       setAskAgain(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Couldn't save that to memory. Please try again.");
+      if (isMountedRef.current) {
+        setError(e instanceof Error ? e.message : "Couldn't save that to memory. Please try again.");
+      }
     } finally {
-      setPending(null);
+      if (isMountedRef.current) {
+        setPending(null);
+      }
     }
   };
 
@@ -178,8 +356,10 @@ export default function Home() {
         toVersion: currentDetails.toVersion,
         outcome: note,
       });
-      setLaterEvents((prev) => [...prev, ...(data.memory_events ?? [])]);
-      setAskAgain(true);
+      if (isMountedRef.current) {
+        setLaterEvents((prev) => [...prev, ...(data.memory_events ?? [])]);
+        setAskAgain(true);
+      }
       return true;
     } catch {
       return false;
@@ -204,12 +384,26 @@ export default function Home() {
     ? { ...brief.playbook, refreshed_at: clockTime(brief.playbook.refreshed_at) }
     : null;
 
+  const needsLearningPrompt =
+    Boolean(brief && !loading && (
+      brief.summary.includes("Learn it first") ||
+      brief.summary.includes("Memory doesn't hold enough")
+    ));
+
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <Header />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
-        <StackForm initialStack={stack} onSubmit={handleSubmit} isLoading={loading} />
+        <StackForm
+          initialStack={stack}
+          initialLibrary={currentDetails.library}
+          initialFromVersion={currentDetails.fromVersion}
+          initialToVersion={currentDetails.toVersion}
+          onSubmit={handleSubmit}
+          isLoading={loading}
+          loadingStepText={activeSteps[step] ?? "Analyzing upgrade risks..."}
+        />
 
         {error && (
           <div
@@ -222,8 +416,12 @@ export default function Home() {
             </span>
             <button
               type="button"
-              onClick={() => handleSubmit(stack)}
-              className="rounded-md border border-red-300 bg-white px-3 py-1 text-xs font-semibold text-red-800 hover:bg-red-100 cursor-pointer"
+              disabled={loading}
+              onClick={() => {
+                if (loading || isSubmittingRef.current) return;
+                handleSubmit(stack, currentDetails);
+              }}
+              className="rounded-md border border-red-300 bg-white px-3 py-1 text-xs font-semibold text-red-800 hover:bg-red-100 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
               Retry
             </button>
@@ -240,8 +438,30 @@ export default function Home() {
               >
                 <Loader2 className="h-4 w-4 animate-spin text-neutral-500" aria-hidden="true" />
                 <span>
-                  {STEPS[step]}… <span className="text-neutral-400">({step + 1}/{STEPS.length})</span>
+                  {activeSteps[step]}… <span className="text-neutral-400">({step + 1}/{activeSteps.length})</span>
                 </span>
+              </div>
+            )}
+
+            {needsLearningPrompt && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-amber-600 shrink-0" aria-hidden="true" />
+                  <span>
+                    Regression Radar needs to learn real GitHub issues for this library before it can detect breakages.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={() => {
+                    if (loading || isSubmittingRef.current) return;
+                    handleLearnStack(stack);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-amber-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                >
+                  Learn into memory now
+                </button>
               </div>
             )}
 
@@ -250,8 +470,12 @@ export default function Home() {
                 <span>Saved to memory. Ask again to see the answer change.</span>
                 <button
                   type="button"
-                  onClick={() => runBrief(stack)}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-purple-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-purple-800 cursor-pointer"
+                  disabled={loading}
+                  onClick={() => {
+                    if (loading || isSubmittingRef.current) return;
+                    runBrief(stack, currentDetails);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-purple-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-purple-800 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                 >
                   <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
                   Ask again
