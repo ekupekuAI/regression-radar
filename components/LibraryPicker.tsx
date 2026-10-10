@@ -41,11 +41,11 @@ export const PRESETS: Preset[] = [
     toVersion: "2.0",
   },
   {
-    id: "react",
-    label: "React 18 → 19",
-    library: "React",
-    fromVersion: "18",
-    toVersion: "19",
+    id: "pandas",
+    label: "pandas 1.x → 2.0",
+    library: "pandas",
+    fromVersion: "1.x",
+    toVersion: "2.0",
   },
 ];
 
@@ -158,7 +158,7 @@ export function LibraryPicker({
             Check an upgrade before it breaks.
           </h2>
           <p className="mt-2 text-sm text-neutral-600 sm:text-base">
-            Search verified regression history across Next.js, React, Pydantic, NumPy, and more.
+            Search verified regression history across Next.js, Pydantic, NumPy, pandas, and any GitHub repo.
           </p>
         </div>
 
