@@ -33,7 +33,7 @@ const DEFAULT_STACK = "Next.js 14.1 to 14.2";
 
 // Steps shown while querying the committed 98-issue snapshot.
 const STEPS_SNAPSHOT = [
-  "Searching memory of 98 bug reports",
+  "Searching memory of real GitHub bug reports",
   "Reading what memory found",
   "Checking every issue number against GitHub",
 ];

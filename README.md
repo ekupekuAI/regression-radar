@@ -240,7 +240,7 @@ npm run dev                            # http://localhost:3000
 
 ## Limitations
 
-- **Scope is one upgrade path,** on purpose: Next.js 14.1 to 14.2 with the App Router and Prisma. Ask about anything else and it says so instead of guessing. Covering any stack means a much larger ingest and per-stack verification.
+- **Learning a new library takes about a minute.** The first question fetches its real GitHub issues into memory, and the briefing comes on the next question. Projects that don't use GitHub issues (Django, for example) can't be learned this way, and the app says so instead of guessing. The deepest coverage, with a committed snapshot and a self-updating playbook, is still Next.js 14.1 to 14.2 with Prisma.
 - **"Closed" is treated as "fixed".** GitHub's `state_reason` would separate *completed* from *not planned*. That's the next thing to add.
 - **Feedback is anonymous and unweighted.** One report counts the same as any other. At scale that needs identity and weighting.
 - **Answers vary between runs.** The model is guided toward the 5–8 most relevant results, but which ones make the cut still shifts a little. Confirmed warnings are pinned, so they never drop out.

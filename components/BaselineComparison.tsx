@@ -75,7 +75,7 @@ export function BaselineComparison({
               Compare with no memory
             </h2>
             <p className="text-xs text-neutral-500">
-              Every issue number either answer cites is checked against our 98-issue snapshot.
+              Every issue number either answer cites is checked against the real GitHub issues in memory.
             </p>
           </div>
 
@@ -133,7 +133,7 @@ export function BaselineComparison({
                     </div>
                     <p className="mt-2 text-xs text-neutral-700 leading-relaxed">
                       {dropped === 0
-                        ? "Every issue it cited exists in the snapshot, with its real fixed or open status."
+                        ? "Every issue it cited is a real GitHub issue, with its real fixed or open status."
                         : `${dropped} cited issue${dropped === 1 ? "" : "s"} couldn't be verified, so ${
                             dropped === 1 ? "it was" : "they were"
                           } left out before showing you anything.`}
@@ -147,7 +147,7 @@ export function BaselineComparison({
               <ul className="mt-3 space-y-1.5 text-xs text-neutral-600">
                 <li className="flex items-center gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                  <span>Answers from 98 real GitHub issues in memory</span>
+                  <span>Answers from real GitHub issues in memory</span>
                 </li>
                 <li className="flex items-center gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
@@ -196,8 +196,8 @@ export function BaselineComparison({
                         : offVerified === 0
                         ? `None of the issue numbers it cited (${memoryOff.citations.numbers
                             .map((n) => `#${n}`)
-                            .join(", ")}) could be verified against our snapshot.`
-                        : `${offVerified} of its ${offCited} cited issues could be verified against our snapshot.`}
+                            .join(", ")}) could be verified against GitHub.`
+                        : `${offVerified} of its ${offCited} cited issues could be verified against GitHub.`}
                     </p>
                     {memoryOff.recorded && (
                       <p className="mt-2 text-[11px] leading-relaxed text-neutral-500">

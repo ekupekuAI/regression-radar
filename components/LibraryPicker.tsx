@@ -97,7 +97,7 @@ export function LibraryPicker({
   initialStack,
   onSubmit,
   isLoading = false,
-  loadingStepText = "Searching memory of 98 bug reports",
+  loadingStepText = "Searching memory of real GitHub bug reports",
 }: LibraryPickerProps) {
   const [library, setLibrary] = useState(() => {
     if (initialStack && !initialLibrary) {
@@ -337,7 +337,7 @@ export function LibraryPicker({
             <span>
               {isLoading
                 ? loadingStepText
-                : "Answers from 98 real bug reports in Next.js and Prisma, verified against GitHub."}
+                : "Answers from real GitHub bug reports, every one verified. Type any library name or any GitHub repo as owner/repo."}
             </span>
           </p>
         </form>

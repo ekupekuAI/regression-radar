@@ -51,7 +51,7 @@ export function RiskList({ risks, summaryText, onFeedback, sent = {}, pending = 
 
       {risks.length === 0 ? (
         <p className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600">
-          Nothing in memory matches that upgrade yet. Try “Next.js 14.1 to 14.2, app router + Prisma”.
+          Nothing in memory matches that upgrade yet. Try a library name such as React, Flask or Vue, or any GitHub repo as owner/repo.
         </p>
       ) : (
         <div className="space-y-3.5">
