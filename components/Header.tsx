@@ -1,8 +1,10 @@
 import React from "react";
 import { ShieldCheck, Radar } from "lucide-react";
+import { HowItWorks } from "@/components/HowItWorks";
 
 export function Header() {
   return (
+    <>
     <header className="border-b border-neutral-200 bg-white px-4 sm:px-6 py-3.5 sticky top-0 z-30 shadow-xs">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -33,5 +35,7 @@ export function Header() {
         </div>
       </div>
     </header>
+    <HowItWorks />
+    </>
   );
 }
