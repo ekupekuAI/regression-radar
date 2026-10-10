@@ -50,6 +50,18 @@ const KEYWORDS: [RegExp, string][] = [
 
 // Common library names, so a judge can type "Flask 2 to 3" instead of owner/repo.
 const NAMES: [RegExp, string, string][] = [
+  [/\breact(\.js|js)?\b(?!\s*native)/i, "react/react", "React"],
+  [/\breact\s*native\b/i, "facebook/react-native", "React Native"],
+  [/\bpython\b|\bcpython\b/i, "python/cpython", "Python"],
+  [/\bgolang\b|\bgo\s?1\.\d+/i, "golang/go", "Go"],
+  [/\brust\b/i, "rust-lang/rust", "Rust"],
+  [/\.net\b|\bdotnet\b/i, "dotnet/runtime", ".NET"],
+  [/\brails\b|\bruby on rails\b/i, "rails/rails", "Ruby on Rails"],
+  [/\btransformers\b|hugging\s?face/i, "huggingface/transformers", "Hugging Face Transformers"],
+  [/\bscikit[-\s]?learn\b|\bsklearn\b/i, "scikit-learn/scikit-learn", "scikit-learn"],
+  [/\blangchain\b/i, "langchain-ai/langchain", "LangChain"],
+  [/\bkubernetes\b|\bk8s\b/i, "kubernetes/kubernetes", "Kubernetes"],
+  [/\blaravel\b/i, "laravel/framework", "Laravel"],
   [/\bvue(\.js|js)?\b/i, "vuejs/core", "Vue"],
   [/\bflask\b/i, "pallets/flask", "Flask"],
   [/\bfast\s?api\b/i, "fastapi/fastapi", "FastAPI"],
@@ -92,7 +104,7 @@ export function detectStack(text: string): Stack | null {
 }
 
 /** For the out-of-scope message: what a user can type. */
-export const EXAMPLES = "Flask, Vue, FastAPI, Express, Vite, TypeScript, Angular, Tailwind, PyTorch, Pydantic, NumPy or pandas";
+export const EXAMPLES = "React, Vue, Angular, Python, Flask, FastAPI, Pydantic, NumPy, pandas, Express, Node.js, TypeScript, Go, Rust, .NET, Rails, PyTorch or Kubernetes";
 
 export function stackTag(s: Stack) {
   return `stack:${s.slug}`;
