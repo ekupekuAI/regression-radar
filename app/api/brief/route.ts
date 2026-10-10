@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { reflectRisks, reflectStackRisks, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
+import { reflectRisks, reflectStackRisks, retainStackIssues, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
 import { detectStack, fetchIssues, stackTag, type Stack } from "@/lib/stacks";
 import {
   verifyCitations,
@@ -282,6 +282,33 @@ async function briefForStack(s: Stack, stack: string) {
     ]);
     const known = new Map(fetched.map((i) => [i.number, i]));
     const memory_events: MemoryEvent[] = [...events];
+
+    // First time anyone asks about this library: learn it now, and say so.
+    const recalledCount = events.find((e) => e.type === "recall")?.hits ?? 0;
+    if (recalledCount === 0 && risks.length === 0) {
+      if (fetched.length === 0) {
+        return NextResponse.json({ error: `GitHub returned no issues for ${s.repo}. Check the owner/repo name.` }, { status: 404 });
+      }
+      const learned = await retainStackIssues(stackTag(s), s.label, fetched);
+      return NextResponse.json({
+        query: stack,
+        memory: true,
+        stack: { slug: s.slug, label: s.label, repo: s.repo },
+        citations: { total: 0, verified: 0 },
+        summary:
+          `New library: learned ${fetched.length} real issues from github.com/${s.repo} just now. ` +
+          `Hindsight is processing them. Press the button again in about a minute for the briefing.`,
+        model_summary: null,
+        corpus_size: fetched.length,
+        risks: [],
+        playbook: null,
+        memory_events: [
+          ...memory_events,
+          { type: "recall", hits: fetched.length, note: `fetched ${fetched.length} real issues from github.com/${s.repo}`, at: new Date().toISOString() },
+          learned,
+        ],
+      });
+    }
 
     const out: Risk[] = [];
     const shown = new Set<number>();
