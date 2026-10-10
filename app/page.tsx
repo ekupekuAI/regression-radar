@@ -14,6 +14,7 @@ import {
 } from "@/components/MemoryInspector";
 import { BaselineComparison, BaselineData, BriefCitations } from "@/components/BaselineComparison";
 import { LearnForm } from "@/components/LearnForm";
+import { LibrariesInMemory, LearnedLibraryEvent } from "@/components/LibrariesInMemory";
 
 type BriefResponse = {
   query: string;
@@ -115,6 +116,7 @@ export default function Home() {
   const [sent, setSent] = useState<Record<string, "hit" | "fine">>({});
   const [pending, setPending] = useState<string | null>(null);
   const [askAgain, setAskAgain] = useState(false);
+  const [lastLearnedLibrary, setLastLearnedLibrary] = useState<LearnedLibraryEvent | null>(null);
 
   // Lifecyle and concurrency refs to prevent duplicate requests and timer leaks
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -171,12 +173,26 @@ export default function Home() {
           const learnData = await postJSON<{
             memory_events?: MemoryEventItem[];
             learned?: number;
+            open?: number;
+            closed?: number;
             stack?: { slug: string; label: string; repo: string };
           }>("/api/learn-stack", { stack: s }, signal);
 
           if (isMountedRef.current && learnData?.memory_events) {
             setLaterEvents((prev) => [...prev, ...(learnData.memory_events ?? [])]);
             setStep((prev) => Math.max(prev, 1));
+          }
+
+          if (isMountedRef.current && learnData?.stack) {
+            setLastLearnedLibrary({
+              slug: learnData.stack.slug,
+              label: learnData.stack.label,
+              repo: learnData.stack.repo,
+              learned: learnData.learned ?? 0,
+              open: learnData.open,
+              closed: learnData.closed,
+              timestamp: Date.now(),
+            });
           }
         } catch (learnErr) {
           if (learnErr instanceof Error && learnErr.name === "AbortError") {
@@ -201,6 +217,19 @@ export default function Home() {
       setBrief(data);
       setLaterEvents([]);
       setSent({});
+
+      if (data?.stack && isMountedRef.current) {
+        setLastLearnedLibrary((prev) => {
+          if (prev?.slug === data.stack?.slug && prev?.learned) return prev;
+          return {
+            slug: data.stack!.slug,
+            label: data.stack!.label,
+            repo: data.stack!.repo,
+            learned: data.corpus_size ?? 0,
+            timestamp: Date.now(),
+          };
+        });
+      }
     } catch (e) {
       if (e instanceof Error && e.name === "AbortError") {
         return;
@@ -294,11 +323,27 @@ export default function Home() {
       const learnData = await postJSON<{
         memory_events?: MemoryEventItem[];
         learned?: number;
+        open?: number;
+        closed?: number;
+        stack?: { slug: string; label: string; repo: string };
       }>("/api/learn-stack", { stack: s }, controller.signal);
 
       if (isMountedRef.current && learnData?.memory_events) {
         setLaterEvents((prev) => [...prev, ...(learnData.memory_events ?? [])]);
       }
+
+      if (isMountedRef.current && learnData?.stack) {
+        setLastLearnedLibrary({
+          slug: learnData.stack.slug,
+          label: learnData.stack.label,
+          repo: learnData.stack.repo,
+          learned: learnData.learned ?? 0,
+          open: learnData.open,
+          closed: learnData.closed,
+          timestamp: Date.now(),
+        });
+      }
+
       if (isMountedRef.current) {
         setStep(1);
       }
@@ -519,7 +564,8 @@ export default function Home() {
             {brief && <LearnForm stack={stack} onSave={handleSaveOutcome} />}
           </div>
 
-          <div className="lg:col-span-4 lg:sticky lg:top-20">
+          <div className="lg:col-span-4 lg:sticky lg:top-20 space-y-6">
+            <LibrariesInMemory lastLearnedLibrary={lastLearnedLibrary} />
             <MemoryInspector
               events={allEvents}
               breakdown={breakdown}
