@@ -37,11 +37,27 @@ function verify(answer: string) {
  */
 export async function POST(req: Request) {
   let stack = "";
+  let library = "";
+  let fromVersion = "";
+  let toVersion = "";
+
   try {
     const body = await req.json();
-    stack = typeof body?.stack === "string" ? body.stack.trim() : "";
+    library = typeof body?.library === "string" ? body.library.trim().slice(0, 100) : "";
+    fromVersion = typeof body?.fromVersion === "string" ? body.fromVersion.trim().slice(0, 50) : "";
+    toVersion = typeof body?.toVersion === "string" ? body.toVersion.trim().slice(0, 50) : "";
+
+    if (typeof body?.stack === "string" && body.stack.trim()) {
+      stack = body.stack.trim().slice(0, 300);
+    } else if (library) {
+      stack = fromVersion && toVersion
+        ? `${library} ${fromVersion} to ${toVersion}`
+        : toVersion
+          ? `${library} ${toVersion}`
+          : library;
+    }
   } catch {
-    return NextResponse.json({ error: "Send JSON with a 'stack' field." }, { status: 400 });
+    return NextResponse.json({ error: "Send JSON with upgrade details." }, { status: 400 });
   }
   if (!stack) {
     return NextResponse.json({ error: "Describe the upgrade you are about to do." }, { status: 400 });
@@ -101,6 +117,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       query: stack,
+      library: library || undefined,
+      from_version: fromVersion || undefined,
+      to_version: toVersion || undefined,
       memory: false,
       answer,
       citations: verify(answer),

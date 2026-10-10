@@ -17,6 +17,9 @@ import { LearnForm } from "@/components/LearnForm";
 
 type BriefResponse = {
   query: string;
+  library?: string;
+  from_version?: string;
+  to_version?: string;
   summary: string;
   citations: BriefCitations;
   corpus_size: number;
@@ -25,7 +28,7 @@ type BriefResponse = {
   playbook: PlaybookData | null;
 };
 
-const DEFAULT_STACK = "Next.js 14.1 to 14.2, app router + Prisma";
+const DEFAULT_STACK = "Next.js 14.1 to 14.2";
 
 // The real steps /api/brief goes through, shown in order while it works.
 const STEPS = [
@@ -57,6 +60,15 @@ function clockTime(iso: string | null | undefined) {
 
 export default function Home() {
   const [stack, setStack] = useState(DEFAULT_STACK);
+  const [currentDetails, setCurrentDetails] = useState<{
+    library: string;
+    fromVersion: string;
+    toVersion: string;
+  }>({
+    library: "Next.js",
+    fromVersion: "14.1",
+    toVersion: "14.2",
+  });
   const [brief, setBrief] = useState<BriefResponse | null>(null);
   const [baseline, setBaseline] = useState<BaselineData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -76,12 +88,20 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [loading]);
 
-  const runBrief = async (s: string) => {
+  const runBrief = async (
+    s: string,
+    details?: { library?: string; fromVersion?: string; toVersion?: string }
+  ) => {
     setLoading(true);
     setError(null);
     setAskAgain(false);
     try {
-      const data = await postJSON<BriefResponse>("/api/brief", { stack: s });
+      const data = await postJSON<BriefResponse>("/api/brief", {
+        stack: s,
+        library: details?.library ?? currentDetails.library,
+        fromVersion: details?.fromVersion ?? currentDetails.fromVersion,
+        toVersion: details?.toVersion ?? currentDetails.toVersion,
+      });
       setBrief(data);
       setLaterEvents([]);
       setSent({});
@@ -92,11 +112,21 @@ export default function Home() {
     }
   };
 
-  const runBaseline = async (s: string) => {
+  const runBaseline = async (
+    s: string,
+    details?: { library?: string; fromVersion?: string; toVersion?: string }
+  ) => {
     setBaselineLoading(true);
     setBaselineError(null);
     try {
-      setBaseline(await postJSON<BaselineData>("/api/baseline", { stack: s }));
+      setBaseline(
+        await postJSON<BaselineData>("/api/baseline", {
+          stack: s,
+          library: details?.library ?? currentDetails.library,
+          fromVersion: details?.fromVersion ?? currentDetails.fromVersion,
+          toVersion: details?.toVersion ?? currentDetails.toVersion,
+        })
+      );
     } catch (e) {
       setBaselineError(e instanceof Error ? e.message : "The comparison failed. Please try again.");
     } finally {
@@ -104,10 +134,16 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = (s: string) => {
+  const handleSubmit = (
+    s: string,
+    details?: { library: string; fromVersion: string; toVersion: string }
+  ) => {
     setStack(s);
-    runBrief(s);
-    runBaseline(s);
+    if (details) {
+      setCurrentDetails(details);
+    }
+    runBrief(s, details);
+    runBaseline(s, details);
   };
 
   const handleFeedback = async (riskId: string, happened: boolean) => {
@@ -118,6 +154,9 @@ export default function Home() {
     try {
       const data = await postJSON<{ memory_events: MemoryEventItem[] }>("/api/learn", {
         stack,
+        library: currentDetails.library,
+        fromVersion: currentDetails.fromVersion,
+        toVersion: currentDetails.toVersion,
         feedback: [{ number: risk.sources[0].number, happened }],
       });
       setSent((prev) => ({ ...prev, [riskId]: happened ? "hit" : "fine" }));
@@ -134,6 +173,9 @@ export default function Home() {
     try {
       const data = await postJSON<{ memory_events: MemoryEventItem[] }>("/api/learn", {
         stack,
+        library: currentDetails.library,
+        fromVersion: currentDetails.fromVersion,
+        toVersion: currentDetails.toVersion,
         outcome: note,
       });
       setLaterEvents((prev) => [...prev, ...(data.memory_events ?? [])]);
@@ -235,7 +277,7 @@ export default function Home() {
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-neutral-300 bg-white p-8 text-center text-sm text-neutral-600">
-                <p className="font-medium text-neutral-900">Press “Check this upgrade” to see what broke for other developers.</p>
+                <p className="font-medium text-neutral-900">Press “Check Upgrade Risks” to see what broke for other developers.</p>
                 <p className="mt-1 text-xs text-neutral-500">
                   The first answer takes a little while: memory is searched, then every issue is checked against GitHub.
                 </p>

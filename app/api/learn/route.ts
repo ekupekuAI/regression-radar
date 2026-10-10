@@ -29,7 +29,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Send JSON." }, { status: 400 });
   }
 
-  const stack = typeof body.stack === "string" ? body.stack.trim().slice(0, 300) : "";
+  const library = typeof body.library === "string" ? body.library.trim().slice(0, 100) : "";
+  const fromVersion = typeof body.fromVersion === "string" ? body.fromVersion.trim().slice(0, 50) : "";
+  const toVersion = typeof body.toVersion === "string" ? body.toVersion.trim().slice(0, 50) : "";
+
+  let stack = typeof body.stack === "string" ? body.stack.trim().slice(0, 300) : "";
+  if (!stack && library) {
+    stack = fromVersion && toVersion
+      ? `${library} ${fromVersion} to ${toVersion}`
+      : toVersion
+        ? `${library} ${toVersion}`
+        : library;
+  }
   const note = typeof body.outcome === "string" ? body.outcome.trim().slice(0, 1000) : "";
 
   const feedback: Feedback[] = [];
