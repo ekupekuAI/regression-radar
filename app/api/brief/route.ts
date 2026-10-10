@@ -285,7 +285,7 @@ async function briefForStack(s: Stack, stack: string) {
 
     // First time anyone asks about this library: learn it now, and say so.
     const recalledCount = events.find((e) => e.type === "recall")?.hits ?? 0;
-    if (recalledCount === 0 && risks.length === 0) {
+    if (recalledCount === 0) {
       if (fetched.length === 0) {
         return NextResponse.json({ error: `GitHub returned no issues for ${s.repo}. Check the owner/repo name.` }, { status: 404 });
       }
@@ -355,7 +355,7 @@ async function briefForStack(s: Stack, stack: string) {
       citations: { total: cited + dropped, verified: cited },
       summary:
         out.length === 0
-          ? `Memory doesn't hold enough about ${s.label} yet. Learn it first, then ask again in a minute.`
+          ? `Memory doesn't hold enough about ${s.label} yet. It is still being processed. Ask again in a minute.`
           : `${out.length} known breakage${out.length === 1 ? "" : "s"} for ${s.label}. ${out.length - open} fixed, ${open} still open.` +
             (confirmed ? ` ${confirmed} confirmed by developers who did this upgrade.` : ""),
       model_summary: summary,
