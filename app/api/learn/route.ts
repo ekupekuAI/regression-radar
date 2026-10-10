@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { retainOutcome, type Feedback } from "@/lib/hindsight";
 import { lookup } from "@/lib/groundTruth";
+import { detectStack, fetchIssues } from "@/lib/stacks";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
@@ -33,12 +34,17 @@ export async function POST(req: Request) {
 
   const feedback: Feedback[] = [];
   const rejected: number[] = [];
+  // A library learned on demand is checked against its own fetched issues.
+  const ext = detectStack(stack);
+  const extKnown = ext
+    ? new Set((await fetchIssues(ext).catch(() => [])).map((i) => i.number))
+    : null;
   if (Array.isArray(body.feedback)) {
     for (const f of body.feedback.slice(0, 20)) {
       const n = Number((f as Feedback)?.number);
       const happened = (f as Feedback)?.happened;
       if (!Number.isInteger(n) || typeof happened !== "boolean") continue;
-      if (!lookup(n)) {
+      if (extKnown ? !extKnown.has(n) : !lookup(n)) {
         rejected.push(n);
         continue;
       }

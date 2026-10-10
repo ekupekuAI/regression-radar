@@ -358,3 +358,104 @@ export async function retainOutcome(
     at,
   };
 }
+
+/**
+ * Retain one library's fetched issues under its own stack tag. Asynchronous,
+ * so the request returns at once while Hindsight extracts facts in the
+ * background; a library that was already learned is simply refreshed, because
+ * the document ids are stable.
+ */
+export async function retainStackIssues(
+  tag: string,
+  label: string,
+  issues: { repo: string; number: number; title: string; state: string; url: string; body: string }[]
+): Promise<MemoryEvent> {
+  const at = new Date().toISOString();
+  const items = issues.map((i) => ({
+    content:
+      `[${label}] GitHub issue #${i.number} in ${i.repo} (${i.state === "open" ? "still open" : "closed"}): ` +
+      `${i.title}. ${i.body}`,
+    timestamp: at,
+    document_id: `${i.repo}#${i.number}`,
+    tags: [tag, `issue:${i.number}`],
+    metadata: { repo: i.repo, number: String(i.number), state: i.state, url: i.url },
+  }));
+  const r = await fetch(`${BASE}/v1/default/banks/${BANK_ID}/memories`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({ items, async: true }),
+  });
+  if (!r.ok) {
+    const detail = await r.text().catch(() => "");
+    throw new Error(`Hindsight retain failed: ${r.status} ${detail.slice(0, 200)}`);
+  }
+  return { type: "retain", hits: items.length, note: `saved ${items.length} real ${label} issues into memory`, at };
+}
+
+/** The same briefing as reflectRisks, scoped to one library's memories. */
+export async function reflectStackRisks(
+  tag: string,
+  label: string,
+  stack: string
+): Promise<{ summary: string; risks: RawRisk[]; events: MemoryEvent[]; tally: Tally }> {
+  const now = () => new Date().toISOString();
+  const events: MemoryEvent[] = [];
+
+  let recalled: { type: string; text: string }[] = [];
+  try {
+    const rec = await call("/memories/recall", {
+      query: stack,
+      tags: [tag],
+      tags_match: "any_strict",
+      budget: "mid",
+      max_tokens: 3000,
+    });
+    recalled = (rec.results ?? []).map((r: RecallResult) => ({
+      type: r.type ?? "unknown",
+      text: (r.text ?? "").split(" | ")[0].slice(0, 180),
+    }));
+  } catch {
+    // Non-fatal: the briefing still works, the inspector just shows less.
+  }
+  const breakdown = recalled.reduce<Record<string, number>>((acc, m) => {
+    acc[m.type] = (acc[m.type] ?? 0) + 1;
+    return acc;
+  }, {});
+  events.push({
+    type: "recall",
+    query: stack,
+    hits: recalled.length,
+    breakdown,
+    samples: recalled.slice(0, 4),
+    note: `searched the ${label} memory, found ${recalled.length} relevant memories`,
+    at: now(),
+  });
+
+  const { tally, reports } = await recallOutcomes(stack);
+  if (reports > 0) {
+    events.push({
+      type: "recall",
+      hits: reports,
+      note: `found ${reports} report${reports === 1 ? "" : "s"} from developers who already did this upgrade`,
+      at: now(),
+    });
+  }
+
+  const query =
+    `A developer is about to perform this upgrade: ${stack} (${label}). ` +
+    `Using only the real ${label} GitHub issues you remember, list the specific things ` +
+    `likely to break - aim for the 5 to 8 most relevant, most relevant first, and fewer ` +
+    `only if memory genuinely holds fewer. For each one give a short title, a one sentence ` +
+    `explanation, how confident you are, and the GitHub issue numbers it comes from. ` +
+    `Never invent an issue number. Do not say whether something is fixed.`;
+  const data = await call("/reflect", { query, budget: "high", response_schema: RISK_SCHEMA });
+  const structured = data.structured_output ?? {};
+  const risks: RawRisk[] = Array.isArray(structured.risks) ? structured.risks : [];
+  events.push({
+    type: "reflect",
+    hits: recalled.length,
+    note: `reasoned over the ${label} memories, produced ${risks.length} candidate risks`,
+    at: now(),
+  });
+  return { summary: typeof structured.summary === "string" ? structured.summary : "", risks, events, tally };
+}

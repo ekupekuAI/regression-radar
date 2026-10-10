@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { reflectRisks, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
+import { reflectRisks, reflectStackRisks, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
+import { detectStack, fetchIssues, stackTag, type Stack } from "@/lib/stacks";
 import {
   verifyCitations,
   verifyPlaybookText,
@@ -49,6 +50,10 @@ export async function POST(req: Request) {
   if (!stack) {
     return NextResponse.json({ error: "Describe the upgrade you are about to do." }, { status: 400 });
   }
+
+  // Libraries learned on demand get their own memory and their own check.
+  const external = detectStack(stack);
+  if (external) return briefForStack(external, stack);
 
   // Out-of-scope stacks are answered honestly without consulting memory.
   // Without this gate the model answered "React 17 to 18 with Vite" with
@@ -242,5 +247,78 @@ export async function POST(req: Request) {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 502 });
+  }
+}
+
+/**
+ * A library learned on demand. Citations are checked against the issues
+ * actually fetched for that library, so a number from another repository is
+ * dropped instead of being linked to the wrong issue.
+ */
+async function briefForStack(s: Stack, stack: string) {
+  try {
+    const [fetched, { summary, risks, events, tally }] = await Promise.all([
+      fetchIssues(s),
+      reflectStackRisks(stackTag(s), s.label, stack),
+    ]);
+    const known = new Map(fetched.map((i) => [i.number, i]));
+    const memory_events: MemoryEvent[] = [...events];
+
+    const out: Risk[] = [];
+    const shown = new Set<number>();
+    let dropped = 0;
+    let cited = 0;
+    for (const r of risks) {
+      const sources: Source[] = [];
+      for (const n of r.issue_numbers ?? []) {
+        const i = known.get(Number(n));
+        if (!i) { dropped++; continue; }
+        if (!sources.some((x) => x.number === i.number)) sources.push({ repo: i.repo, number: i.number, url: i.url, title: i.title });
+      }
+      if (sources.length === 0 || sources.every((x) => shown.has(x.number))) continue;
+      sources.forEach((x) => shown.add(x.number));
+      cited += sources.length;
+      const open = sources.some((x) => known.get(x.number)?.state === "open");
+      const fb = { hit: 0, fine: 0 };
+      for (const x of sources) {
+        const t = tally[x.number];
+        if (t) { fb.hit += t.hit; fb.fine += t.fine; }
+      }
+      let why = r.why;
+      let confidence = r.confidence ?? "medium";
+      if (fb.hit > fb.fine) { confidence = "high"; why = `${why} Confirmed by ${developers(fb.hit)} who did this upgrade.`; }
+      else if (fb.fine > fb.hit) { confidence = "low"; why = `${why} ${developers(fb.fine)} who did this upgrade reported it did not affect them.`; }
+      out.push({ id: idFor(sources[0]), title: r.title, status: open ? "open" : "fixed", fixed_in: null, confidence, why, sources, feedback: fb });
+    }
+    const group = (r: Risk) => (r.feedback.hit > r.feedback.fine ? 0 : r.feedback.fine > r.feedback.hit ? 2 : 1);
+    out.sort((a, b) => group(a) - group(b) || RANK[a.confidence] - RANK[b.confidence]);
+
+    if (dropped > 0) {
+      memory_events.push({
+        type: "reflect",
+        note: `dropped ${dropped} citation${dropped === 1 ? "" : "s"} not among the ${fetched.length} real ${s.label} issues`,
+        at: new Date().toISOString(),
+      });
+    }
+    const open = out.filter((v) => v.status === "open").length;
+    const confirmed = out.filter((r) => r.feedback.hit > r.feedback.fine).length;
+    return NextResponse.json({
+      query: stack,
+      memory: true,
+      stack: { slug: s.slug, label: s.label, repo: s.repo },
+      citations: { total: cited + dropped, verified: cited },
+      summary:
+        out.length === 0
+          ? `Memory doesn't hold enough about ${s.label} yet. Learn it first, then ask again in a minute.`
+          : `${out.length} known breakage${out.length === 1 ? "" : "s"} for ${s.label}. ${out.length - open} fixed, ${open} still open.` +
+            (confirmed ? ` ${confirmed} confirmed by developers who did this upgrade.` : ""),
+      model_summary: summary,
+      corpus_size: fetched.length,
+      risks: out,
+      playbook: null,
+      memory_events,
+    });
+  } catch (err) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : "Unknown error" }, { status: 502 });
   }
 }
