@@ -48,25 +48,51 @@ const KEYWORDS: [RegExp, string][] = [
   [/pandas/i, "pandas-2"],
 ];
 
+// Common library names, so a judge can type "Flask 2 to 3" instead of owner/repo.
+const NAMES: [RegExp, string, string][] = [
+  [/\bvue(\.js|js)?\b/i, "vuejs/core", "Vue"],
+  [/\bflask\b/i, "pallets/flask", "Flask"],
+  [/\bfast\s?api\b/i, "fastapi/fastapi", "FastAPI"],
+  [/\bexpress(\.js|js)?\b/i, "expressjs/express", "Express"],
+  [/\bvite\b/i, "vitejs/vite", "Vite"],
+  [/\btype\s?script\b|\bts\s?\d/i, "microsoft/TypeScript", "TypeScript"],
+  [/\bangular\b/i, "angular/angular", "Angular"],
+  [/\btailwind(\s?css)?\b/i, "tailwindlabs/tailwindcss", "Tailwind CSS"],
+  [/\b(py)?torch\b/i, "pytorch/pytorch", "PyTorch"],
+  [/\bspring(\s?boot)?\b/i, "spring-projects/spring-boot", "Spring Boot"],
+  [/\bnode(\.js|js)?\b/i, "nodejs/node", "Node.js"],
+  [/\bsvelte(kit)?\b/i, "sveltejs/svelte", "Svelte"],
+  [/\brequests\b/i, "psf/requests", "Requests"],
+  [/\bsql\s?alchemy\b/i, "sqlalchemy/sqlalchemy", "SQLAlchemy"],
+  [/\btensorflow\b/i, "tensorflow/tensorflow", "TensorFlow"],
+];
+
+function generic(repo: string, label: string): Stack {
+  return {
+    slug: repo.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    repo,
+    label,
+    query: `repo:${repo} is:issue regression`,
+  };
+}
+
 /** The library a free-text stack names, or null when it names none we cover. */
 export function detectStack(text: string): Stack | null {
   // Next.js questions keep going to the committed snapshot.
-  if (/next(\.js|js)?\b|prisma/i.test(text)) return null;
+  if (/\bnext(\.js|js)?\b|prisma/i.test(text)) return null;
   for (const [re, slug] of KEYWORDS) {
     if (re.test(text)) return PRESETS.find((p) => p.slug === slug) ?? null;
   }
   const m = text.match(/\b([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)\b/);
-  if (m) {
-    const repo = `${m[1]}/${m[2]}`;
-    return {
-      slug: repo.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      repo,
-      label: text.slice(0, 80),
-      query: `repo:${repo} is:issue upgrade breaking`,
-    };
+  if (m) return generic(`${m[1]}/${m[2]}`, text.slice(0, 80));
+  for (const [re, repo, name] of NAMES) {
+    if (re.test(text)) return generic(repo, `${name} (${text.slice(0, 60)})`);
   }
   return null;
 }
+
+/** For the out-of-scope message: what a user can type. */
+export const EXAMPLES = "Flask, Vue, FastAPI, Express, Vite, TypeScript, Angular, Tailwind, PyTorch, Pydantic, NumPy or pandas";
 
 export function stackTag(s: Stack) {
   return `stack:${s.slug}`;
@@ -89,7 +115,12 @@ export async function fetchIssues(s: Stack, limit = 30): Promise<FetchedIssue[]>
   const url =
     "https://api.github.com/search/issues?" +
     new URLSearchParams({ q: s.query, per_page: String(limit), sort: "comments", order: "desc" });
-  const res = await fetch(url, { headers, cache: "no-store" });
+  let res = await fetch(url, { headers, cache: "no-store" });
+  // A revoked or mistyped token should not take the feature down: retry anonymously.
+  if (res.status === 401 && headers.Authorization) {
+    delete headers.Authorization;
+    res = await fetch(url, { headers, cache: "no-store" });
+  }
   if (res.status === 403 || res.status === 429) {
     throw new Error("GitHub is rate-limiting searches right now. Wait a minute and try again.");
   }

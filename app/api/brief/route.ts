@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { reflectRisks, reflectStackRisks, retainStackIssues, getPlaybook, type MemoryEvent } from "@/lib/hindsight";
-import { detectStack, fetchIssues, stackTag, type Stack } from "@/lib/stacks";
+import { EXAMPLES, detectStack, fetchIssues, stackTag, type Stack } from "@/lib/stacks";
 import {
   verifyCitations,
   verifyPlaybookText,
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       query: stack,
       memory: true,
       citations: { total: 0, verified: 0 },
-      summary: `Nothing in memory matches that stack yet. Memory currently covers ${COVERAGE}.`,
+      summary: `I don't recognise a library in "${stack}" yet. Type a library name such as ${EXAMPLES}, or any GitHub repo as owner/repo (for example psf/requests). The first question learns it from real GitHub issues; ask again a minute later for the briefing. Memory also covers ${COVERAGE}.`,
       model_summary: null,
       corpus_size: TOTAL_ISSUES,
       risks: [],

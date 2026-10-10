@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { retainStackIssues } from "@/lib/hindsight";
-import { PRESETS, detectStack, fetchIssues, stackTag } from "@/lib/stacks";
+import { EXAMPLES, PRESETS, detectStack, fetchIssues, stackTag } from "@/lib/stacks";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -9,6 +9,7 @@ export const maxDuration = 60;
 export async function GET() {
   return NextResponse.json({
     stacks: PRESETS.map((p) => ({ slug: p.slug, label: p.label, repo: p.repo })),
+    github_token: Boolean(process.env.GITHUB_TOKEN),
   });
 }
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
   const stack = detectStack(text);
   if (!stack) {
     return NextResponse.json(
-      { error: "Name a library we can learn: Pydantic, NumPy, pandas, or any GitHub repo as owner/repo." },
+      { error: `Name a library we can learn, such as ${EXAMPLES}, or any GitHub repo as owner/repo.` },
       { status: 400 }
     );
   }
