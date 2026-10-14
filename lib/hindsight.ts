@@ -58,6 +58,13 @@ export type Feedback = { number: number; happened: boolean };
 export type Tally = Record<number, { hit: number; fine: number }>;
 
 function headers() {
+  // Without a key every call fails with Hindsight's bare 401, which tells a
+  // reader nothing. Say what is missing instead.
+  if (!KEY) {
+    throw new Error(
+      "Memory isn't configured on this server. Set HINDSIGHT_API_KEY (and HINDSIGHT_API_URL) and restart."
+    );
+  }
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${KEY}`,
