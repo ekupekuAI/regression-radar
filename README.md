@@ -94,7 +94,7 @@ Regression Radar answers the same question from a [Hindsight](https://github.com
 ## 🧭 How it works
 
 ```mermaid
-flowchart LR
+flowchart TD
     U(["Developer: Next.js 14.1 to 14.2"]) --> S{"Which memory?<br/>scope check in code"}
     S -- "Next.js / Prisma" --> SNAP[("Hindsight bank<br/>98-issue snapshot")]
     S -- "other library" --> GH["GitHub search API<br/>fetch its real issues"]
