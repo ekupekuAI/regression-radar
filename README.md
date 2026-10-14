@@ -1,180 +1,238 @@
 <p align="center">
   <a href="https://regression-radar.vercel.app">
-    <img src="docs/hero.svg" alt="Regression Radar: know what breaks before you upgrade" width="100%">
+    <img src="docs/readme/banner.svg" alt="Regression Radar: know what breaks before you upgrade" width="100%">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://regression-radar.vercel.app"><img alt="Live" src="https://img.shields.io/badge/live-regression--radar.vercel.app-e6edf3?style=flat-square&labelColor=161b22"></a>
-  <a href="https://github.com/vectorize-io/hindsight"><img alt="Memory: Hindsight" src="https://img.shields.io/badge/memory-Hindsight-e6edf3?style=flat-square&labelColor=161b22"></a>
-  <img alt="Data: 98 real GitHub issues" src="https://img.shields.io/badge/data-98%20real%20GitHub%20issues-e6edf3?style=flat-square&labelColor=161b22">
-  <img alt="Citations: checked before shown" src="https://img.shields.io/badge/citations-checked%20before%20shown-3fb950?style=flat-square&labelColor=161b22">
-  <img alt="Next.js 14" src="https://img.shields.io/badge/Next.js-14-e6edf3?style=flat-square&labelColor=161b22&logo=nextdotjs&logoColor=white">
+  <a href="https://regression-radar.vercel.app"><img alt="Live site" src="https://img.shields.io/badge/live-regression--radar.vercel.app-3fb950?style=for-the-badge&labelColor=0d1117"></a>
+  <a href="https://github.com/ekupekuAI/regression-radar/deployments"><img alt="Vercel deployment" src="https://img.shields.io/github/deployments/ekupekuAI/regression-radar/Production?style=for-the-badge&logo=vercel&label=vercel&labelColor=0d1117"></a>
+  <a href="https://github.com/vectorize-io/hindsight"><img alt="Memory: Hindsight" src="https://img.shields.io/badge/memory-Hindsight-388bfd?style=for-the-badge&labelColor=0d1117"></a>
+  <img alt="Citations checked before shown" src="https://img.shields.io/badge/citations-checked%20before%20shown-d29922?style=for-the-badge&labelColor=0d1117">
+</p>
+
+<p align="center">
+  <img alt="Tech stack: Next.js, React, TypeScript, Tailwind CSS, Vercel, Python" src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,vercel,python&theme=dark">
 </p>
 
 <p align="center">
   <a href="https://regression-radar.vercel.app"><b>Try it live</b></a>
   &nbsp;·&nbsp;
-  <a href="#watch-it-learn">Watch it learn</a>
+  <a href="#-see-it-work">See it work</a>
   &nbsp;·&nbsp;
-  <a href="#how-hindsight-memory-is-used">How the memory works</a>
+  <a href="#-how-it-works">How it works</a>
   &nbsp;·&nbsp;
-  <a href="#run-it-yourself">Run it yourself</a>
+  <a href="#-quickstart">Quickstart</a>
+  &nbsp;·&nbsp;
+  <a href="#-whats-new-in-this-version">What's new</a>
 </p>
 
-<br>
+---
 
-## 12 citations. Not one we could find.
+## 🛰️ What it is
 
-We asked a capable general model, with no memory, what breaks when you take a Next.js 14.1 app with Prisma to 14.2. It answered with confidence and cited 12 GitHub issue numbers. We looked every one of them up in our snapshot of 98 real bug reports from that upgrade. None of them were there.
+**Regression Radar tells you what is likely to break in a library upgrade, using real bug reports other developers already filed. It never shows an issue number it can't verify.**
 
-Regression Radar answers the same question from a memory of those real reports. Every issue it cites is checked against GitHub before you see it, and anything that can't be checked is left out. Then it does the part a stateless model can't: when you tell it what actually happened in your upgrade, the next developer gets a better answer.
+We asked a capable general model, with no memory, what breaks when you take a Next.js 14.1 app with Prisma to 14.2. It answered with confidence and cited **12 GitHub issue numbers**. We looked every one up in our snapshot of 98 real bug reports from that upgrade. **None of them were there.**
+
+Regression Radar answers the same question from a [Hindsight](https://github.com/vectorize-io/hindsight) memory of those real reports. The model only picks *which* reports are relevant; the code decides what is true. Every cited issue is checked against the real issue list before you see it, its fixed or open status is stamped from GitHub, and anything that can't be checked is left out. When you tell it what actually happened in your upgrade, the next developer gets a better answer.
 
 <p align="center">
-  <img src="docs/memory-on-off.svg" alt="Same question with and without memory: 0 of 12 cited issues could be verified without memory, 8 of 8 were checked against GitHub with Regression Radar" width="100%">
+  <img src="docs/memory-on-off.svg" alt="Same question with and without memory: 0 of 12 cited issues could be verified without memory, 8 of 8 were checked with Regression Radar" width="100%">
 </p>
 
-<sub>Left: the recorded no-memory answer from <code>openai/gpt-oss-120b</code>, 2 October 2026 (<a href="data/baseline-recorded.json"><code>data/baseline-recorded.json</code></a>). Right: what the live app returned for the same question on 4 October. "Not in the snapshot" means we couldn't verify the number. It doesn't prove the issue doesn't exist, so we never say it was made up.</sub>
+<sub>Left: the recorded no-memory answer from <code>openai/gpt-oss-120b</code>, 2 October 2026 (<a href="data/baseline-recorded.json"><code>data/baseline-recorded.json</code></a>). Right: what the live app returned for the same question. "Not in the snapshot" means we couldn't verify the number. It doesn't prove the issue doesn't exist, so we never say it was made up.</sub>
 
-## Why this exists
+## 🎬 See it work
 
-Whatever breaks in your upgrade has usually broken for somebody else first, and they wrote it down in a public issue tracker. Nobody reads a few hundred bug reports before bumping a version number, so teams keep walking into the same regressions.
+<p align="center">
+  <img src="docs/readme/walkthrough.gif" alt="Walkthrough: checking the Next.js 14.1 to 14.2 upgrade, the loading steps, the verified results and the memory-on/memory-off comparison" width="100%">
+</p>
 
-Regression Radar reads them for you, remembers them, and keeps a running record of what actually hit the people who upgraded before you.
+<sub>Recorded against the live site: press <b>Check Upgrade Risks</b>, memory is searched, citations are verified, then the results, the Memory Inspector and the no-memory comparison.</sub>
 
-<h2 id="watch-it-learn">Watch it learn</h2>
+## ✨ Features
+
+| | Feature | What it does |
+|:-:|---|---|
+| 🔎 | **Any library** | Pick a preset (Next.js, Pydantic, NumPy, pandas, React), type a common name such as Flask, Vue, Rails or PyTorch, or give any GitHub repo as `owner/repo`. |
+| 🧠 | **Answers from memory** | Hindsight `recall` + `reflect` over real bug reports, asked for the 5 to 8 most relevant breakages and the issue numbers behind each. |
+| ✅ | **Verified citations** | Every issue number is checked against the real issue list. Unverifiable ones are dropped, and *fixed / still open* comes from GitHub, never from the model. |
+| 📚 | **Learns new libraries on demand** | The first question about a new library fetches its real GitHub issues into its own tagged memory. The briefing comes about a minute later. |
+| 👍 | **Learns from your upgrade** | Mark each warning **This hit us** or **Didn't affect us**, or write what happened. Confirmed warnings move to the top; cleared ones sink. |
+| ⚖️ | **Memory on vs off** | The same question answered by a general model with no memory, with its citations checked the same way. |
+| 🔬 | **Memory Inspector** | Shows each recall, reflect and retain step, which kinds of memory came back, real memories it used, and Hindsight's self-rewriting playbook. |
+| 🚧 | **Says when it doesn't know** | A stack it can't place gets "I don't recognise a library…" instead of a confident answer about something else. |
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td width="62%"><img src="docs/readme/results.png" alt="Results: verified breakages with fixed or open status, confidence and feedback buttons"></td>
+    <td width="38%"><img src="docs/readme/memory-inspector.png" alt="Memory Inspector: recall and reflect steps, real memories used and Hindsight's playbook"></td>
+  </tr>
+  <tr>
+    <td><b>Results.</b> Each breakage links to its GitHub issue, with status stamped from GitHub.</td>
+    <td><b>Memory Inspector.</b> What memory did for this answer, step by step.</td>
+  </tr>
+  <tr>
+    <td><img src="docs/readme/comparison.png" alt="Comparison: memory on, all cited issues verified; memory off, 0 of 12 verified"></td>
+    <td><img src="docs/readme/mobile.png" alt="The app at phone width"></td>
+  </tr>
+  <tr>
+    <td><b>Memory on vs off.</b> The same question, with the citations counted.</td>
+    <td><b>Phone width.</b> The whole flow works on mobile.</td>
+  </tr>
+</table>
+
+<details>
+<summary>Start screen</summary>
+<br>
+<img src="docs/readme/home.png" alt="Start screen with quick presets and the library and version form">
+</details>
+
+## 🧭 How it works
+
+```mermaid
+flowchart LR
+    U(["Developer: Next.js 14.1 to 14.2"]) --> S{"Which memory?<br/>scope check in code"}
+    S -- "Next.js / Prisma" --> SNAP[("Hindsight bank<br/>98-issue snapshot")]
+    S -- "other library" --> GH["GitHub search API<br/>fetch its real issues"]
+    GH -- "retain, tagged per library" --> LIB[("Hindsight bank<br/>library memory")]
+    S -- "nothing recognised" --> NONE["Says so<br/>no model call"]
+    SNAP --> R["recall + reflect<br/>titles + issue numbers"]
+    LIB --> R
+    R --> V{"Verify every<br/>issue number"}
+    V -- "not a real issue" --> X["Dropped"]
+    V -- "real" --> ST["Status stamped<br/>fixed / still open"]
+    ST --> FB["Developer reports applied in code<br/>confirmed first, cleared last"]
+    FB --> OUT(["Briefing + Memory Inspector"])
+    OUT -. "This hit us / Didn't affect us" .-> L["api/learn<br/>tagged retain"]
+    L -.-> SNAP
+    L -.-> LIB
+```
+
+**Memory decides what's relevant. The code decides what's true.** `reflect()` returns issue numbers through a `response_schema` and is never asked whether something is fixed. Statuses come from [`data/issues-index.json`](data/issues-index.json) (the committed Next.js + Prisma snapshot) or from the issues fetched live from GitHub for any other library, so a number from another repository can't be linked to the wrong issue.
+
+Every answer draws on four kinds of Hindsight memory:
+
+| Memory | What it holds here | How it gets there |
+|---|---|---|
+| **World facts** | What each bug report says: symptom, versions, workaround, fix | `retain()` of each cleaned issue; Hindsight's extraction decides what counts as a fact |
+| **Observations** | Patterns across reports, e.g. several Prisma issues failing the same way in edge runtimes | Consolidated automatically by Hindsight |
+| **Developer reports** | "Issue #66248 DID happen to me", "#65454 did NOT affect me" | `/api/learn` retains each verdict with tags (`issue:66248`, `happened:yes`), counted once per report |
+| **Mental model** | A standing playbook of what usually breaks in this upgrade | `create_mental_model()` with `refresh_after_consolidation`; Hindsight rewrites it itself |
 
 <p align="center">
   <img src="docs/learning-loop.svg" alt="A developer reports which warnings hit them. The confirmed warning moves to the top with high confidence; the one that didn't affect them sinks to low confidence." width="100%">
 </p>
 
-You ask about your upgrade and get a list of known breakages. After you upgrade, you tap **This hit us** or **Didn't affect us** on each one. That report goes into memory. Ask the same question again and the warning that hit you is first, marked *"Confirmed by 1 developer who did this upgrade"*. The one that didn't affect you drops to the bottom.
+<details>
+<summary><b>Design decisions</b>: why the rules live in code</summary>
+<br>
 
-The reordering isn't left to the model's judgment. It's applied in code, because this is the part that has to be right every time ([design decision 2](#2-feedback-is-stored-as-structure-and-applied-in-code)).
+**1. Memory decides what's relevant. The snapshot decides what's true.** In the first working version the model labelled 3 of 10 closed issues as still open (#64603, #66248, #64609). It was reading "still broken" comments written months before the fix. It also cited #71281, which isn't in the dataset. So statuses are stamped from data, and citations that can't be found are dropped. The mental model gets the same treatment: its first draft cited "#84901675" for a problem whose real issue is #66248, so its text is checked before it's shown.
 
-## What you get back
+**2. Feedback is stored as structure and applied in code.** Given developer outcomes as context, the model didn't act on them consistently, and one report was counted as six because Hindsight splits a report into several facts. Now each verdict is its own tagged memory, counted once per report, and the reordering is deterministic. Confirmed warnings can't drop out of later answers. `/api/learn` only accepts issue numbers that exist for that library.
 
-```
-POST /api/brief  { "stack": "Next.js 14.1 to 14.2, app router + Prisma" }
-```
+**3. The before/after is a number, not an adjective.** `/api/baseline` asks the same question to `openai/gpt-oss-120b` on Groq with no memory, and runs the same verification on its answer. The public site serves one complete recorded run (2 October 2026) instead of spending model quota on every check; set `BASELINE_LIVE=on` to call the model live.
+
+**4. It says when it doesn't know.** Verification proves an issue exists, not that it answers your question. Asked about "React 17 to 18 with Vite and Redux", an early version returned five real, "verified" Prisma and Next.js issues. The scope rule now lives in code, and Next.js versions outside 14.1 to 14.2 get a note saying the results are the nearest reports.
+
+</details>
+
+## 🔌 API
+
+| Endpoint | Body | Returns |
+|---|---|---|
+| `POST /api/brief` | `{ stack }` or `{ library, fromVersion, toVersion }` | `summary`, `risks[]`, `citations`, `memory_events[]`, `playbook` |
+| `POST /api/learn` | `{ stack, feedback: [{ number, happened }], outcome? }` | `recorded`, `rejected`, `memory_events[]` |
+| `POST /api/learn-stack` | `{ stack }` | Fetches a library's GitHub issues into memory: `learned`, `open`, `closed` |
+| `GET /api/learn-stack` | | The preset libraries |
+| `POST /api/baseline` | `{ stack }` | The no-memory `answer`, its `citations`, and `recorded` when it's the recorded run |
 
 ```jsonc
+// POST /api/brief { "stack": "Next.js 14.1 to 14.2" }
 {
-  "summary": "8 known breakages for this combination. 5 fixed, 3 still open.",
+  "summary": "8 known breakages for this combination. 6 fixed, 2 still open.",
   "citations": { "total": 8, "verified": 8 },
-  "risks": [
-    {
-      "title": "Inconsistent CSS resolution order",
-      "status": "open",                 // from GitHub, never from the model
-      "confidence": "high",
-      "why": "layout.js imports override component-level CSS in production builds.",
-      "sources": [{ "number": 64921, "url": "https://github.com/vercel/next.js/issues/64921" }],
-      "feedback": { "hit": 0, "fine": 0 }
-    }
-  ],
-  "memory_events": [ /* what memory was searched and what came back */ ],
-  "playbook": { /* Hindsight's mental model for this upgrade, verified */ }
+  "risks": [{
+    "title": "Inconsistent CSS resolution order",
+    "status": "open",            // from GitHub, never from the model
+    "confidence": "high",
+    "sources": [{ "number": 64921, "url": "https://github.com/vercel/next.js/issues/64921" }],
+    "feedback": { "hit": 0, "fine": 0 }
+  }]
 }
 ```
 
-Then, after the upgrade:
+## 🚀 Quickstart
 
-```
-POST /api/learn  { "stack": "...", "feedback": [ { "number": 66248, "happened": true },
-                                                 { "number": 65454, "happened": false } ] }
-```
-
-Ask about something it has no data on, say *"React 17 to 18 with Vite"*, and it tells you so instead of guessing:
-
-```jsonc
-{ "summary": "Nothing in memory matches that stack yet. Memory currently covers Next.js 14.1 to 14.2, and Prisma on the Next.js App Router.", "risks": [] }
+```bash
+git clone https://github.com/ekupekuAI/regression-radar.git
+cd regression-radar
+cp .env.example .env      # fill in the values below
+npm install
+npm run dev               # http://localhost:3000
 ```
 
-<h2 id="how-hindsight-memory-is-used">How Hindsight memory is used</h2>
+Without `HINDSIGHT_API_KEY` the page still loads and the no-memory comparison works, but checking an upgrade shows *"Memory isn't configured on this server"*.
 
-It's built on [Hindsight](https://github.com/vectorize-io/hindsight), an [agent memory](https://vectorize.io/what-is-agent-memory) system by Vectorize. Take the memory away and you get the left side of the picture above. Every answer draws on four kinds of memory, and each one does a separate job.
+**Loading the Next.js + Prisma snapshot into your own Hindsight bank** (Python 3, `pip install hindsight-client`):
 
-| Memory | What it holds here | How it gets there |
-|---|---|---|
-| **World facts** | What each of the 98 bug reports says: symptom, affected versions, workaround, fix | `retain()` of each cleaned issue. Hindsight's own extraction decides what counts as a fact. We never hand-sort. |
-| **Observations** | Patterns across reports, e.g. several separate Prisma issues all failing the same way in edge runtimes | Consolidated automatically by Hindsight from the world facts. A query on 4 October recalled **70 memories: 57 facts and 13 observations**. |
-| **Developer reports** | "Issue #66248 DID happen to me", "#65454 did NOT affect me" | `/api/learn` retains each verdict with structured tags (`issue:66248`, `happened:yes`). Hindsight files these as world facts too, and consolidates them. |
-| **Mental model** | A standing playbook: what usually breaks in this upgrade, grouped by area | `create_mental_model()` with a source query and `refresh_after_consolidation: true`. Hindsight rewrites it on its own. We watched it rewrite **22 seconds** after a developer report came in, and the new version mentioned that report. |
-
-**The loop:**
-
-```mermaid
-flowchart LR
-    A[98 real GitHub issues<br/>vercel/next.js + prisma/orm] -->|retain| M[(Hindsight bank)]
-    M -->|consolidates| O[Observations]
-    M -->|rewrites after consolidation| P[Mental model:<br/>upgrade playbook]
-    Q[Developer describes upgrade] --> S{In scope?}
-    S -->|no| N[Says so, no model call]
-    S -->|yes| R[recall + reflect]
-    M --> R
-    O --> R
-    P --> R
-    R --> V{Verify against<br/>the snapshot}
-    V -->|status stamped,<br/>unverifiable dropped| B[Briefing]
-    B --> D[Developer upgrades]
-    D -->|hit us / didn't affect us| L[/api/learn: tagged retain/]
-    L --> M
+```bash
+python fetch_bug_reports.py              # optional: re-fetch; raw_issues.jsonl is committed
+python load_to_hindsight.py init         # create the bank with its mission
+python load_to_hindsight.py load         # retain all 98 issues
+python load_to_hindsight.py mental-model # create the self-updating playbook
 ```
 
-Every response includes `memory_events`, a record of exactly what memory did for that answer. The interface shows it live in the Memory Inspector. From one run:
+`python load_to_hindsight.py reset-feedback --yes` deletes every document that isn't part of the snapshot, so a demo starts from memory nobody has given feedback to. Without `--yes` it's a dry run.
+
+### Environment variables
+
+Set these in `.env` locally, and in **Vercel → Project → Settings → Environment Variables** (Production and Preview) for the deployed app. All of them are read on the server only.
+
+| Variable | Required | Purpose | Where to get it |
+|---|:-:|---|---|
+| `HINDSIGHT_API_KEY` | ✅ | Memory for every briefing and every learn | [Hindsight Cloud](https://hindsight.vectorize.io/) dashboard |
+| `HINDSIGHT_API_URL` | | Your Hindsight instance. Defaults to `https://api.hindsight.vectorize.io`. The Python loader defaults to `http://localhost:8888`, so set it explicitly when loading. | Hindsight Cloud dashboard |
+| `GITHUB_TOKEN` | Recommended | Higher GitHub search limits when learning new libraries, and for `fetch_bug_reports.py` | [github.com/settings/tokens](https://github.com/settings/tokens), no scopes needed |
+| `BASELINE_LIVE` | | `on` calls the model live for the no-memory comparison. Anything else serves the recorded run. | |
+| `GROQ_API_KEY` | Only with `BASELINE_LIVE=on` | The no-memory baseline model | [console.groq.com](https://console.groq.com/keys) |
+| `GROQ_MODEL` | | Baseline model. Defaults to `openai/gpt-oss-120b`. | |
+| `HINDSIGHT_BANK_ID` | | Defaults to `regression-radar-next-prisma`, the bank the loader creates | |
+| `HINDSIGHT_PLAYBOOK_ID` | | Defaults to `upgrade-playbook` | |
+
+<details>
+<summary><b>Project structure</b></summary>
+<br>
 
 ```
-recall   searched memory, found 80 relevant memories       {world: 48, observation: 32}
-recall   found 2 reports from developers who already did this upgrade
-reflect  reasoned over 80 memories, produced 7 candidate risks
-recall   loaded the mental model "What breaks upgrading Next.js 14.1 to 14.2...", rewritten by Hindsight at 08:56 UTC
-reflect  applied developer reports: 1 warning confirmed, 1 marked as did not happen
-reflect  dropped 1 citation not present in the 98-issue snapshot
+app/
+  page.tsx                  the single-page UI: form, results, comparison, inspector
+  api/brief/route.ts        recall + reflect, verification, feedback ordering
+  api/learn/route.ts        stores "this hit us / didn't affect us" and notes
+  api/learn-stack/route.ts  fetches a library's GitHub issues into memory
+  api/baseline/route.ts     the no-memory answer, recorded or live
+components/                 LibraryPicker, RiskList/RiskCard, BaselineComparison,
+                            MemoryInspector, LibrariesInMemory, LearnForm, Header
+lib/
+  hindsight.ts              Hindsight REST calls: recall, reflect, retain, playbook
+  groundTruth.ts            snapshot lookup, scope check, citation + playbook checks
+  stacks.ts                 library detection and on-demand GitHub issue fetching
+data/
+  issues-index.json         the 98-issue snapshot used for verification
+  baseline-recorded.json    the recorded no-memory run
+fetch_bug_reports.py        pulls the issues from GitHub into raw_issues.jsonl
+load_to_hindsight.py        creates the bank, loads issues, builds the playbook
+scripts/test_library_picker.mjs   npm test
+docs/                       README images
 ```
 
-`reflect()` doesn't report which memories it used, so the API runs `recall()` itself first. That way the inspector shows what actually came back instead of claiming it.
+</details>
 
-## Design decisions
-
-### 1. Memory decides what's relevant. The snapshot decides what's true.
-
-In the first working version, the model labelled **3 of 10** closed issues as still open (#64603, #66248, #64609). It was reading people write "still broken" in comments from months before the fix. It also cited #71281, which isn't in the dataset.
-
-So `reflect()` is never asked whether something is fixed. It returns issue numbers only, through a `response_schema`. Every status is stamped from the committed snapshot in [`lib/groundTruth.ts`](lib/groundTruth.ts), and any citation that isn't in the snapshot is dropped. A result you can't click through to is worse than one fewer result.
-
-The mental model gets the same treatment. Its first draft repeated the wrong status labels and cited "#84901675" (an impossible number) for a problem whose real issue is #66248. Its text is now checked the same way before it's shown.
-
-### 2. Feedback is stored as structure and applied in code
-
-The first version of the learning loop passed developer outcomes to the model as context and asked it to act on them. It didn't. A warning a developer had confirmed came back with no mention of the confirmation, and a single report was counted as six, because Hindsight splits one report into several facts and observations. And since the model chose which warnings to include, nothing stopped a confirmed warning from dropping out of a later answer.
-
-Now each verdict is its own memory with structured tags, counted **once per report** on recall. The tally is applied deterministically:
-
-- confirmed warnings go to high confidence and first place, and can't drop out of later answers
-- warnings developers said didn't affect them go to low confidence and last place
-
-`/api/learn` only accepts issue numbers that exist in the snapshot, so the public endpoint can't write numbers from outside the snapshot into shared memory.
-
-### 3. The before/after is a number, not an adjective
-
-`/api/baseline` sends the same question, with no memory, to a capable general model (`openai/gpt-oss-120b` on Groq) and runs the same verification on its answer.
-
-| | Issue numbers cited | Verifiable against the snapshot |
-|---|---|---|
-| Memory off (across our runs) | 0–12 | **0, every time** |
-| Memory on (across our runs) | 4–12 | **all shown** (unverifiable ones are dropped) |
-
-Early runs capped the answer at 900 tokens. That cap also covers the model's hidden reasoning, so some answers were cut off before they cited anything. The cap is now 4,000. Given room to finish, the model cited 12 issue numbers, and none of them could be verified.
-
-The public site serves that complete run, recorded on 2 October 2026, instead of calling the model on every check, so anyone with the link isn't spending model quota. The interface labels it as recorded. Set `BASELINE_LIVE=on` to call the model live.
-
-### 4. It says when it doesn't know
-
-Verification proves a cited issue exists. It doesn't prove the issue answers your question. Asked about *"React 17 to 18 with Vite and Redux"*, an earlier version returned five Prisma and Next.js issues, every one of them real and every one "verified".
-
-So the scope rule lives in code too. A stack that names neither Next.js nor Prisma gets "nothing in memory matches" straight away, without a model call. A Next.js version outside 14.1 to 14.2 still gets the nearest reports, with a note saying they aren't a record of that exact upgrade.
-
-## The data
+## 📊 The data
 
 98 real issues, pulled by [`fetch_bug_reports.py`](fetch_bug_reports.py) and committed as [`raw_issues.jsonl`](raw_issues.jsonl):
 
@@ -184,68 +242,30 @@ So the scope rule lives in code too. A stack that names neither Next.js nor Pris
 | State | 56 open, 42 closed |
 | Created | 2024 onwards (Next.js 14.2 shipped April 2024) |
 | With discussion | 84 include top comments, which is usually where the fix or workaround is |
-| Duplicates / pull requests | 0 / 0 |
 
-Nothing is fetched live while the app runs. The snapshot is the source of truth for status.
+Other libraries aren't committed: their issues (the 30 most-discussed from GitHub search) are fetched when first asked about and kept in their own tagged memory.
 
-<details>
-<summary><b>What went wrong getting it</b></summary>
-<br>
+## 🆕 What's new in this version
 
-- GitHub's `search/issues` returns pull requests as well as issues. The first dataset was full of PRs until every query carried `is:issue`.
-- Every Prisma query failed with HTTP 422. The repository was renamed from `prisma/prisma` to `prisma/orm`, and GitHub search's `repo:` qualifier doesn't follow the redirect.
-- Sorting by "recently updated" surfaced Next.js 15 and 16 issues for a 14.2 question. Relevance ranking plus `created:>2024-01-01` fixed it.
-- A token placed in `.env` was silently ignored, so the first full run crawled at 60 requests an hour instead of 5,000.
-
-</details>
-
-<h2 id="run-it-yourself">Run it yourself</h2>
-
-```bash
-git clone https://github.com/ekupekuAI/regression-radar.git
-cd regression-radar
-cp .env.example .env          # fill in the values below
-npm install
-pip install hindsight-client
-
-python fetch_bug_reports.py            # or use the committed raw_issues.jsonl
-python load_to_hindsight.py init       # create the bank with its mission
-python load_to_hindsight.py load       # retain all 98 issues
-python load_to_hindsight.py mental-model
-npm run dev                            # http://localhost:3000
-```
-
-| Variable | Purpose |
-|---|---|
-| `HINDSIGHT_API_URL`, `HINDSIGHT_API_KEY` | Hindsight Cloud instance. The loader and the app must point at the same one. |
-| `GROQ_API_KEY` | The memory-off baseline (`openai/gpt-oss-120b` on Groq), used only when `BASELINE_LIVE=on` |
-| `BASELINE_LIVE` | `on` calls the model live for the memory-off baseline. Anything else serves the recorded run. |
-| `GITHUB_TOKEN` | Only for re-fetching the data |
-
-`python load_to_hindsight.py reset-feedback --yes` deletes every document that isn't part of the snapshot and has Hindsight rewrite the playbook. Run it before showing the before/after to someone new, so it starts from a memory nobody has given feedback to yet. Without `--yes` it's a dry run.
-
-<details>
-<summary><b>API reference</b></summary>
-<br>
-
-| Endpoint | Body | Returns |
+| | Before | After |
 |---|---|---|
-| `POST /api/brief` | `{ stack }` | `risks[]`, `citations`, `memory_events[]`, `playbook` |
-| `POST /api/learn` | `{ stack, feedback: [{ number, happened }], outcome? }` | `recorded`, `rejected`, `memory_events[]` |
-| `POST /api/baseline` | `{ stack }` | the no-memory `answer`, `citations`, and `recorded` when it's the recorded run |
+| **Security** | `next@14.2.15`, flagged by npm for the December 2025 Next.js security advisory | `next@14.2.35`, the patched release on the same 14.2 line |
+| **Missing memory key** | Every check failed with Hindsight's raw `401 Invalid API key format` | A clear *"Memory isn't configured… set HINDSIGHT_API_KEY"* message in the app's error banner |
+| **`.env.example`** | Missing three variables the code reads | Lists `HINDSIGHT_BANK_ID`, `HINDSIGHT_PLAYBOOK_ID` and `GROQ_MODEL` with their defaults |
+| **README** | Static header, no screenshots of the app | Animated radar banner (respects reduced motion), walkthrough recording, real screenshots, architecture diagram, full env-var table |
 
-</details>
+Everything else (verification, the learning loop, on-demand libraries, the inspector) was tested end to end on the live site and works as before.
 
-**Stack:** Next.js 14 (App Router) on Vercel · Hindsight Cloud for memory (`retain`, `recall`, `reflect`, mental models) · Groq for the no-memory baseline · Python for the data pipeline.
+## 🔭 Future development
 
-## Limitations
+- **"Closed" is treated as "fixed".** GitHub's `state_reason` would separate *completed* from *not planned*.
+- **Memory-off baseline per library.** The comparison always shows the recorded Next.js run (labelled as such), even when you check another library.
+- **Feedback is anonymous and unweighted.** At scale it needs identity and weighting.
+- **Learning a new library takes about a minute,** and you press the button again for the briefing. Polling until memory is ready would remove that step. Projects that don't use GitHub issues can't be learned this way.
+- **Answers vary a little between runs.** Confirmed warnings are pinned, but which other results make the cut can shift.
+- **Housekeeping:** a few Tailwind v4 class names (`shadow-xs`, `outline-hidden`) do nothing under the project's Tailwind v3; `three`, `@react-three/*` and `gsap` are installed but unused; `npm test` checks component source text rather than behaviour.
 
-- **Learning a new library takes about a minute.** The first question fetches its real GitHub issues into memory, and the briefing comes on the next question. Projects that don't use GitHub issues (Django, for example) can't be learned this way, and the app says so instead of guessing. The deepest coverage, with a committed snapshot and a self-updating playbook, is still Next.js 14.1 to 14.2 with Prisma.
-- **"Closed" is treated as "fixed".** GitHub's `state_reason` would separate *completed* from *not planned*. That's the next thing to add.
-- **Feedback is anonymous and unweighted.** One report counts the same as any other. At scale that needs identity and weighting.
-- **Answers vary between runs.** The model is guided toward the 5–8 most relevant results, but which ones make the cut still shifts a little. Confirmed warnings are pinned, so they never drop out.
-
-## Team
+## 👥 Team
 
 Built by **Let Us Cook**.
 
@@ -256,8 +276,9 @@ Built by **Let Us Cook**.
 | **Chandana** | Research and evidence | [Dependabot gives pass rates. Our Hindsight agent remembers what broke.](https://dev.to/chandanabonbon/dependabot-gives-pass-rates-our-hindsight-agent-remembers-what-broke-728) | [Post](https://www.linkedin.com/feed/update/urn:li:activity:7510408391261945857/) | |
 | **Meghana** | Story and launch | [Our Hindsight playbook rewrote itself within 22 seconds](https://dev.to/nenavathmeghanarathoddot/our-hindsight-playbook-rewrote-itself-within-22-seconds-l6j) | [Post](https://www.linkedin.com/feed/update/urn:li:activity:7510393480532328449/) | |
 
-## Links
+## 🔗 Links
 
+- Live app: https://regression-radar.vercel.app
 - Hindsight on GitHub: https://github.com/vectorize-io/hindsight
 - Hindsight documentation: https://hindsight.vectorize.io/
 - What agent memory is: https://vectorize.io/what-is-agent-memory
